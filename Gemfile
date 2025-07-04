@@ -62,6 +62,5 @@ group :test do
   gem "selenium-webdriver"
 end
 
-
-# Changes made by me
+# INSTALL HAML 
 gem 'haml-rails'
