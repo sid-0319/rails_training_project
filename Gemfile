@@ -64,3 +64,9 @@ end
 
 # INSTALL HAML 
 gem 'haml-rails'
+
+#INSTALL PG
+gem 'pg'
+
+#INSTALL DOTENV
+gem 'dotenv-rails'
