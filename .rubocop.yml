@@ -1,8 +1,113 @@
-# Omakase Ruby styling for Rails
-inherit_gem: { rubocop-rails-omakase: rubocop.yml }
+# .rubocop.yml
 
-# Overwrite or add rules to create your own house style
-#
-# # Use `[a, [b, c]]` not `[ a, [ b, c ] ]`
-# Layout/SpaceInsideArrayLiteralBrackets:
-#   Enabled: false
+AllCops:
+  Exclude:
+    - 'bin/*'
+    - 'db/schema.rb'
+    - 'db/queue_schema.rb'
+
+# This file configures RuboCop rules for your Ruby project.
+# Each rule below includes a brief comment describing its purpose.
+
+Layout/AssignmentIndentation:
+  # Ensures assignments are properly indented for readability.
+  Enabled: true
+
+Layout/CommentIndentation:
+  # Checks that comments are aligned with the surrounding code.
+  Enabled: true
+
+Layout/EmptyLines:
+  # Checks for multiple consecutive blank lines.
+  Enabled: true
+
+Layout/EmptyLineBetweenDefs:
+  # Requires an empty line between method definitions for clarity.
+  Enabled: true
+
+Layout/FirstHashElementIndentation:
+  # Ensures consistent indentation of the first element in a hash.
+  Enabled: true
+  EnforcedStyle: consistent
+
+Layout/IndentationConsistency:
+  # Checks for consistent indentation (normal vs. special indentation).
+  Enabled: true
+  EnforcedStyle: normal
+
+Layout/IndentationStyle:
+  # Enforces use of spaces or tabs for indentation.
+  Enabled: true
+
+Layout/IndentationWidth:
+  # Sets the number of spaces used for indentation.
+  Enabled: true
+  Width: 2
+
+Layout/RescueEnsureAlignment:
+  # Ensures rescue/ensure keywords are aligned with their begin blocks.
+  Enabled: true
+
+Layout/SpaceAroundBlockParameters:
+  # Checks for space between block parameters and the pipes.
+  Enabled: true
+
+Layout/SpaceBeforeBlockBraces:
+  # Requires a space before the opening brace in block.
+  Enabled: true
+
+Layout/SpaceInsideBlockBraces:
+  # Requires spaces inside block braces.
+  Enabled: true
+
+Layout/SpaceInsideHashLiteralBraces:
+  # Checks for spaces inside hash literal braces.
+  Enabled: true
+
+Lint/RequireParentheses:
+  # Ensures method calls with arguments use parentheses.
+  Enabled: true
+
+Layout/TrailingWhitespace:
+  # Disallows trailing whitespace on lines.
+  Enabled: true
+
+Naming/AsciiIdentifiers:
+  # Enforces use of ASCII-only characters in identifiers.
+  Enabled: true
+
+Naming/ClassAndModuleCamelCase:
+  # Enforces CamelCase for class and module names.
+  Enabled: true
+
+Naming/FileName:
+  # Enforces snake_case for file names.
+  Enabled: true
+
+Naming/MethodName:
+  # Enforces snake_case for method names.
+  Enabled: true
+
+Naming/PredicateName:
+  # Enforces use of `?` suffix for predicate method names.
+  Enabled: true
+
+Naming/VariableName:
+  # Enforces snake_case for variable names.
+  Enabled: true
+
+Style/AndOr:
+  # Enforces use of `&&` and `||` over `and`/`or`.
+  Enabled: true
+
+Style/BlockDelimiters:
+  # Enforces use of `{}` for single-line and `do..end` for multi-line blocks.
+  Enabled: true
+
+Style/HashSyntax:
+  # Enforces modern hash syntax (e.g., `key: value` instead of `:key => value`).
+  Enabled: true
+
+Style/NumericLiterals:
+  # Checks for proper use of numeric separators for readability.
+  Enabled: true
