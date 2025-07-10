@@ -75,3 +75,10 @@ gem 'dotenv-rails'
 
 # INSTALL RUBOCOP
 gem 'rubocop', require: false
+
+# INSTAQLL DEVISE
+gem 'devise'
+
+
+gem 'bootstrap', '~> 5.3'
+gem 'sassc-rails'
