@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ApplicationController < ActionController::Base
   allow_browser versions: :modern
 
@@ -6,9 +8,9 @@ class ApplicationController < ActionController::Base
   protected
 
   def configure_permitted_parameters
-    added_attrs = [
-      :first_name, :last_name, :age, :date_of_birth, :phone_number,
-      :email, :password, :password_confirmation
+    added_attrs = %i[
+      first_name last_name age date_of_birth phone_number
+      email password password_confirmation
     ]
     devise_parameter_sanitizer.permit(:sign_up, keys: added_attrs)
     devise_parameter_sanitizer.permit(:account_update, keys: added_attrs)
