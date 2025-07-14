@@ -17,105 +17,105 @@ Layout/LineLength:
 # This file configures RuboCop rules for your Ruby project.
 # Each rule below includes a brief comment describing its purpose.
 
+ # Ensures assignments are properly indented for readability.
 Layout/AssignmentIndentation:
-  # Ensures assignments are properly indented for readability.
   Enabled: true
 
-Layout/CommentIndentation:
   # Checks that comments are aligned with the surrounding code.
+Layout/CommentIndentation:
   Enabled: true
 
-Layout/EmptyLines:
   # Checks for multiple consecutive blank lines.
+Layout/EmptyLines:
   Enabled: true
 
+# Requires an empty line between method definitions for clarity.
 Layout/EmptyLineBetweenDefs:
-  # Requires an empty line between method definitions for clarity.
   Enabled: true
 
-Layout/FirstHashElementIndentation:
   # Ensures consistent indentation of the first element in a hash.
+Layout/FirstHashElementIndentation:
   Enabled: true
   EnforcedStyle: consistent
 
-Layout/IndentationConsistency:
   # Checks for consistent indentation (normal vs. special indentation).
+Layout/IndentationConsistency:
   Enabled: true
   EnforcedStyle: normal
 
-Layout/IndentationStyle:
   # Enforces use of spaces or tabs for indentation.
+Layout/IndentationStyle:
   Enabled: true
 
-Layout/IndentationWidth:
   # Sets the number of spaces used for indentation.
+Layout/IndentationWidth:
   Enabled: true
   Width: 2
 
-Layout/RescueEnsureAlignment:
   # Ensures rescue/ensure keywords are aligned with their begin blocks.
+Layout/RescueEnsureAlignment:
   Enabled: true
 
-Layout/SpaceAroundBlockParameters:
   # Checks for space between block parameters and the pipes.
+Layout/SpaceAroundBlockParameters:
   Enabled: true
 
-Layout/SpaceBeforeBlockBraces:
   # Requires a space before the opening brace in block.
+Layout/SpaceBeforeBlockBraces:
   Enabled: true
 
-Layout/SpaceInsideBlockBraces:
   # Requires spaces inside block braces.
+Layout/SpaceInsideBlockBraces:
   Enabled: true
 
-Layout/SpaceInsideHashLiteralBraces:
   # Checks for spaces inside hash literal braces.
+Layout/SpaceInsideHashLiteralBraces:
   Enabled: true
 
-Lint/RequireParentheses:
   # Ensures method calls with arguments use parentheses.
+Lint/RequireParentheses:
   Enabled: true
 
-Layout/TrailingWhitespace:
   # Disallows trailing whitespace on lines.
+Layout/TrailingWhitespace:
   Enabled: true
 
-Naming/AsciiIdentifiers:
   # Enforces use of ASCII-only characters in identifiers.
+Naming/AsciiIdentifiers:
   Enabled: true
 
-Naming/ClassAndModuleCamelCase:
   # Enforces CamelCase for class and module names.
+Naming/ClassAndModuleCamelCase:
   Enabled: true
 
-Naming/FileName:
   # Enforces snake_case for file names.
+Naming/FileName:
   Enabled: true
 
-Naming/MethodName:
   # Enforces snake_case for method names.
+Naming/MethodName:
   Enabled: true
 
-Naming/PredicateName:
   # Enforces use of `?` suffix for predicate method names.
+Naming/PredicateName:
   Enabled: true
 
-Naming/VariableName:
   # Enforces snake_case for variable names.
+Naming/VariableName:
   Enabled: true
 
-Style/AndOr:
   # Enforces use of `&&` and `||` over `and`/`or`.
+Style/AndOr:
   Enabled: true
 
-Style/BlockDelimiters:
   # Enforces use of `{}` for single-line and `do..end` for multi-line blocks.
+Style/BlockDelimiters:
   Enabled: true
 
-Style/HashSyntax:
   # Enforces modern hash syntax (e.g., `key: value` instead of `:key => value`).
+Style/HashSyntax:
   Enabled: true
 
-Style/NumericLiterals:
   # Checks for proper use of numeric separators for readability.
+Style/NumericLiterals:
   Enabled: true
