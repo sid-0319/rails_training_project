@@ -2,9 +2,17 @@
 
 AllCops:
   Exclude:
-    - 'bin/*'
+    - 'bin/**/*'
     - 'db/schema.rb'
     - 'db/queue_schema.rb'
+
+Metrics/MethodLength:
+  Exclude:
+    - 'lib/build/database_builder.rb'
+
+Layout/LineLength:
+  IgnoredPatterns:
+    - '^\s*#'
 
 # This file configures RuboCop rules for your Ruby project.
 # Each rule below includes a brief comment describing its purpose.

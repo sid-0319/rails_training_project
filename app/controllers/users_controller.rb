@@ -1,7 +1,8 @@
-class UsersController < ApplicationController
-  def new
-  end
+# frozen_string_literal: true
 
-  def create
-  end
+# User Controller
+class UsersController < ApplicationController
+  def new; end
+
+  def create; end
 end

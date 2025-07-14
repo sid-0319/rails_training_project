@@ -45,6 +45,9 @@ gem 'thruster', require: false
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem 'debug', platforms: %i[mri windows], require: 'debug/prelude'
+  gem 'factory_bot_rails'
+  gem 'faker'
+  gem 'rspec-rails'
 
   # Static analysis for security vulnerabilities [https://brakemanscanner.org/]
   gem 'brakeman', require: false
@@ -75,3 +78,8 @@ gem 'dotenv-rails'
 
 # INSTALL RUBOCOP
 gem 'rubocop', require: false
+# INSTALL DEVISE
+gem 'devise'
+
+gem 'bootstrap', '~> 5.3'
+gem 'sassc-rails'
