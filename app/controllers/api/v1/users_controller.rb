@@ -5,7 +5,7 @@ module Api
       extend Apipie::DSL::Concern
 
       def_param_group :user do
-        property :id, Integer, desc: 'User ID'
+        property :id, String, desc: 'User ID'
         property :first_name, String, desc: 'First name'
         property :last_name, String, desc: 'Last name'
         property :email, String, desc: 'Email'
@@ -40,6 +40,20 @@ module Api
           render json: result.result, serializer: UserSerializer, status: :created
         else
           render json: { errors: result.errors.full_messages }, status: :unprocessable_entity
+        end
+      end
+
+      api :GET, '/api/v1/users/:id', 'GET REQUEST - Retrieve a specific user by ID'
+      param :id, String, required: true, desc: 'User ID'
+      returns code: 200, desc: 'User found', param_group: :user
+      returns code: 404, desc: 'User not found'
+      def show
+        user = User.find_by(id: params[:id])
+
+        if user
+          render json: user, serializer: UserSerializer, status: :ok
+        else
+          render json: { error: 'User not found' }, status: :not_found
         end
       end
 
