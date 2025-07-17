@@ -89,3 +89,5 @@ gem 'sassc-rails'
 gem 'apipie-rails'
 
 gem 'active_model_serializers'
+
+gem 'active_interaction'
