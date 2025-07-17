@@ -83,4 +83,9 @@ gem 'rubocop', require: false
 gem 'devise'
 
 gem 'bootstrap', '~> 5.3'
+
 gem 'sassc-rails'
+
+gem 'apipie-rails'
+
+gem 'active_model_serializers'
