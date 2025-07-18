@@ -57,6 +57,23 @@ module Api
         end
       end
 
+      api :DELETE, '/api/v1/users/:id', 'DELETE REQUEST - Delete a user by ID'
+      param :id, String, required: true, desc: 'User ID'
+      returns code: 200, desc: 'User deleted successfully' do
+      property :message, String, desc: 'Confirmation message'
+      end
+      returns code: 404, desc: 'User not found'
+
+      def destroy
+      result = ::Api::V1::Users::DeleteUser.run(id: params[:id].to_i)
+
+      if result.valid?
+      render json: { message: 'User deleted successfully' }, status: :ok
+      else
+      render json: { error: result.errors.full_messages }, status: :not_found
+      end
+    end
+
       api :PUT, '/api/v1/users/:id', 'PUT REQUEST - Update a User'
       param :id, String, required: true, desc: 'User ID'
       param :first_name, String, desc: 'First name'
