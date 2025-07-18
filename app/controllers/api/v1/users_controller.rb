@@ -57,6 +57,33 @@ module Api
         end
       end
 
+      api :PUT, '/api/v1/users/:id', 'PUT REQUEST - Update a User'
+      param :id, String, required: true, desc: 'User ID'
+      param :first_name, String, desc: 'First name'
+      param :last_name, String, desc: 'Last name'
+      param :email, String, desc: 'Email address'
+      param :phone_number, String, desc: 'Phone Number'
+      param :password, String, desc: 'Password'
+      param :password_confirmation, String, desc: 'Password confirmation'
+      param :age, Integer, desc: 'Age'
+      param :date_of_birth, String, desc: 'Date of birth (YYYY-MM-DD)'
+      returns code: 200, desc: 'User updated successfully', param_group: :user
+      returns code: 404, desc: 'User not found'
+      returns code: 422, desc: 'Validation failed'
+      def update
+        result = ::Api::V1::Users::UpdateUser.run(user_params.merge(id: params[:id]))
+
+        if result.valid?
+          render json: result.result, serializer: UserSerializer
+        else
+          if result.errors.details[:user]&.any? { |e| e[:error] == :invalid } || result.errors.full_messages.include?('User not found')
+            render json: { errors: result.errors.full_messages }, status: :not_found
+          else
+            render json: { errors: result.errors.full_messages }, status: :unprocessable_entity
+          end
+        end
+      end
+
       private
 
       def user_params
