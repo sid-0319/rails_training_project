@@ -45,5 +45,16 @@ RSpec.describe 'API::V1::Users', type: :request do
       emails = json_response.map { |u| u['email'] }
       expect(emails.uniq.length).to eq(emails.length)
     end
+
+    it 'filters users by first_name' do
+    create(:user, first_name: 'John')
+    create(:user, first_name: 'Jane')
+
+    get '/api/v1/users', params: { first_name: 'John' }
+
+   json_response = JSON.parse(response.body)
+   expect(json_response.length).to eq(1)
+   expect(json_response.first['first_name']).to eq('John')
+   end
   end
 end
