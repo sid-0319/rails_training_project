@@ -6,12 +6,12 @@ module Api
 
       def_param_group :user do
         property :id, Integer, desc: 'User ID'
-        property :first_name, String, desc: 'First name'
-        property :last_name, String, desc: 'Last name'
-        property :email, String, desc: 'Email'
-        property :phone_number, String, desc: 'Phone Number'
-        property :age, Integer, desc: 'Age'
-        property :date_of_birth, String, desc: 'Date of Birth (YYYY-MM-DD)'
+        property :first_name, String, desc: 'Users First name'
+        property :last_name, String, desc: 'Users Last name'
+        property :email, String, desc: 'Users Email'
+        property :phone_number, String, desc: 'Users Phone Number'
+        property :age, Integer, desc: 'Users Age'
+        property :date_of_birth, String, desc: 'Users Date of Birth (YYYY-MM-DD)'
         property :created_at, String, desc: 'Created at'
       end
 
@@ -23,14 +23,14 @@ module Api
       end
 
       api :POST, '/api/v1/users', 'POST REQUEST - Create a new User'
-      param :first_name, String, required: true, desc: 'First name'
-      param :last_name, String, required: true, desc: 'Last name'
-      param :email, String, required: true, desc: 'Email address'
-      param :phone_number, String, required: true, desc: 'Phone Number'
-      param :password, String, required: true, desc: 'Password'
-      param :password_confirmation, String, required: true, desc: 'Password confirmation'
-      param :age, Integer, required: true, desc: 'Age'
-      param :date_of_birth, String, required: true, desc: 'Date of birth (YYYY-MM-DD)'
+      param :first_name, String, required: true, desc: 'Users First name'
+      param :last_name, String, required: true, desc: 'Users Last name'
+      param :email, String, required: true, desc: 'Users Email address'
+      param :phone_number, String, required: true, desc: 'Users Phone Number'
+      param :password, String, required: true, desc: 'Users Password'
+      param :password_confirmation, String, required: true, desc: 'Users Password confirmation'
+      param :age, Integer, required: true, desc: 'Users Age'
+      param :date_of_birth, String, required: true, desc: 'Users Date of birth (YYYY-MM-DD)'
       returns code: 201, desc: 'User created successfully', param_group: :user
       returns code: 422, desc: 'Validation failed'
       def create
