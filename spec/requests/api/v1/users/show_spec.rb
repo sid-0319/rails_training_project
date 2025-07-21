@@ -54,13 +54,6 @@ RSpec.describe 'GET /api/v1/users/:id', type: :request do
     end
   end
 
-  # context 'when ID is nil' do
-  #   it 'returns 404 not found' do
-  #     get '/api/v1/users/'
-  #     expect(response).to have_http_status(:not_found)
-  #   end
-  # end
-
   context 'when ID contains special characters' do
     it 'returns 404 not found' do
       escaped_id = CGI.escape('@#%')
