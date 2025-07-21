@@ -2,59 +2,81 @@ require 'rails_helper'
 
 RSpec.describe 'API::V1::Users', type: :request do
   describe 'GET /api/v1/users' do
-    before do
-      create_list(:user, 5)
-      get '/api/v1/users'
+    let!(:token) { Token.create! }
+
+    context 'when token is valid' do
+      before do
+        create_list(:user, 5)
+        get '/api/v1/users', headers: { 'Authorization' => token.value }
+      end
+
+      it 'returns http success' do
+        expect(response).to have_http_status(:success)
+      end
+
+      it 'returns all users with required fields only' do
+        json_response = JSON.parse(response.body)
+        expect(json_response.length).to eq(5)
+        expect(json_response.first.keys).to match_array(%w[id first_name last_name email created_at])
+      end
+
+      it 'does not expose sensitive fields like password or encrypted_password' do
+        json_response = JSON.parse(response.body)
+        user_keys = json_response.first.keys
+        expect(user_keys).not_to include('password')
+        expect(user_keys).not_to include('encrypted_password')
+      end
+
+      it 'returns valid data types for each field' do
+        json_response = JSON.parse(response.body)
+        user = json_response.first
+        expect(user['id']).to be_an(Integer)
+        expect(user['first_name']).to be_a(String)
+        expect(user['last_name']).to be_a(String)
+        expect(user['email']).to be_a(String)
+        expect { Time.parse(user['created_at']) }.not_to raise_error
+      end
+
+      it 'returns users ordered by creation time ascending (oldest first)' do
+        json_response = JSON.parse(response.body)
+        creation_times = json_response.map { |u| Time.parse(u['created_at']) }
+        expect(creation_times).to eq(creation_times.sort)
+      end
+
+      it 'returns unique emails for each user' do
+        json_response = JSON.parse(response.body)
+        emails = json_response.map { |u| u['email'] }
+        expect(emails.uniq.length).to eq(emails.length)
+      end
+
+      it 'filters users by first_name' do
+        create(:user, first_name: 'John')
+        create(:user, first_name: 'Jane')
+
+        get '/api/v1/users', params: { first_name: 'John' }, headers: { 'Authorization' => token.value }
+
+        json_response = JSON.parse(response.body)
+        expect(json_response.length).to eq(1)
+        expect(json_response.first['first_name']).to eq('John')
+      end
     end
 
-    it 'returns http success' do
-      expect(response).to have_http_status(:success)
+    context 'when token is missing' do
+      it 'returns 401 Unauthorized' do
+        get '/api/v1/users'
+        expect(response).to have_http_status(:unauthorized)
+        json_response = JSON.parse(response.body)
+        expect(json_response['error']).to eq('Unauthorized: Missing token')
+      end
     end
 
-    it 'returns all users with required fields only' do
-      json_response = JSON.parse(response.body)
-      expect(json_response.length).to eq(5)
-      expect(json_response.first.keys).to match_array(%w[id first_name last_name email created_at])
+    context 'when token is invalid' do
+      it 'returns 401 Unauthorized' do
+        get '/api/v1/users', headers: { 'Authorization' => 'invalid_token' }
+        expect(response).to have_http_status(:unauthorized)
+        json_response = JSON.parse(response.body)
+        expect(json_response['error']).to eq('Unauthorized: Invalid or expired token')
+      end
     end
-
-    it 'does not expose sensitive fields like password or encrypted_password' do
-      json_response = JSON.parse(response.body)
-      user_keys = json_response.first.keys
-      expect(user_keys).not_to include('password')
-      expect(user_keys).not_to include('encrypted_password')
-    end
-
-    it 'returns valid data types for each field' do
-      json_response = JSON.parse(response.body)
-      user = json_response.first
-      expect(user['id']).to be_an(Integer)
-      expect(user['first_name']).to be_a(String)
-      expect(user['last_name']).to be_a(String)
-      expect(user['email']).to be_a(String)
-      expect { Time.parse(user['created_at']) }.not_to raise_error
-    end
-
-    it 'returns users ordered by creation time ascending (oldest first)' do
-      json_response = JSON.parse(response.body)
-      creation_times = json_response.map { |u| Time.parse(u['created_at']) }
-      expect(creation_times).to eq(creation_times.sort)
-    end
-
-    it 'returns unique emails for each user' do
-      json_response = JSON.parse(response.body)
-      emails = json_response.map { |u| u['email'] }
-      expect(emails.uniq.length).to eq(emails.length)
-    end
-
-    it 'filters users by first_name' do
-    create(:user, first_name: 'John')
-    create(:user, first_name: 'Jane')
-
-    get '/api/v1/users', params: { first_name: 'John' }
-
-   json_response = JSON.parse(response.body)
-   expect(json_response.length).to eq(1)
-   expect(json_response.first['first_name']).to eq('John')
-   end
   end
 end
