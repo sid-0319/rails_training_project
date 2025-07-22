@@ -2,7 +2,6 @@ module Api
   module V1
     class UsersController < ApplicationController
       skip_before_action :verify_authenticity_token
-      extend Apipie::DSL::Concern
 
       def_param_group :user do
         property :id, String, desc: 'User ID'
@@ -15,10 +14,12 @@ module Api
         property :created_at, String, desc: 'Created at'
       end
 
-      api :GET, '/api/v1/users', 'GET REQUEST - Retrieves all Users'
-      returns array_of: :user, code: 200, desc: 'List of All Users'
+      api :GET, '/api/v1/users', 'Get all users or filtered users'
+      param :first_name, String, desc: 'Filter by first name', required: false
+      param :last_name, String, desc: 'Filter by last name', required: false
+      param :email, String, desc: 'Filter by email', required: false
       def index
-        users = User.all
+        users = ::Api::V1::UsersQuery.new(params).call
         render json: users, each_serializer: UserSerializer
       end
 
