@@ -1,0 +1,22 @@
+.container.mt-4
+  .row
+    .col-md-6.offset-md-3
+      .card
+        .card-body
+          %h2.text-center.mb-4 Update Avatar
+
+          .text-center.mb-3
+            - if current_user.avatar.attached?
+              = image_tag url_for(current_user.avatar), class: "img-thumbnail", size: "200x150"
+            - else
+              = image_tag "/images/default_img.png", class: "img-thumbnail", size: "200x150"
+
+          - if current_user.avatar.attached?
+            .text-center
+              = button_to "Delete Avatar", avatar_path, method: :delete, class: "btn btn-danger mt-2", data: { confirm: "Are you sure?" }
+            %br
+          = form_with model: current_user, url: avatar_path, method: :put, local: true, html: { multipart: true } do |form|
+            .mb-3
+              = form.file_field :avatar, class: "form-control", accept: "image/png,image/jpeg,image/jpg"
+
+            = form.submit "Upload", class: "btn btn-primary w-100"
