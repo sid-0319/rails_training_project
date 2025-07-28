@@ -4,12 +4,13 @@ module Build
   class DatabaseBuilder
     def reset_data
       puts 'Cleaning database...'
+      Restaurant.destroy_all
       User.destroy_all
     end
 
     def create_users
       puts 'Creating users...'
-      10.times do
+      10.times.map do
         User.create!(
           first_name: Faker::Name.first_name,
           last_name: Faker::Name.last_name,
@@ -23,9 +24,35 @@ module Build
       end
     end
 
+    def create_restaurants(users)
+      puts 'Creating restaurants...'
+
+      statuses = %i[open closed archived]
+
+      statuses.each do |status|
+        20.times do
+          user = users.sample
+          restaurant = user.restaurants.new(
+            name: Faker::Restaurant.name,
+            description: Faker::Restaurant.description,
+            location: Faker::Address.city,
+            cuisine_type: Faker::Restaurant.type,
+            rating: rand(1..5),
+            note: Faker::Lorem.sentence,
+            likes: rand(0..100)
+          )
+          restaurant.aasm_state = status.to_s
+          restaurant.save!
+        end
+      end
+
+      puts 'Done creating restaurants!'
+    end
+
     def execute
       reset_data
-      create_users
+      users = create_users
+      create_restaurants(users)
     end
 
     def run

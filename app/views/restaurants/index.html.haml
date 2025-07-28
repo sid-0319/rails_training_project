@@ -1,0 +1,31 @@
+.container
+  %h2.text-center.my-4.text-primary Your Restaurants
+
+  .row
+    - @restaurants.each do |restaurant|
+      .col-sm-12.col-md-6.col-lg-4.mb-4
+        .card.h-100.border-0.shadow-lg.rounded-4
+          .card-body.p-4.d-flex.flex-column
+            %h5.card-title.mb-2.text-dark.fw-bold.text-truncate= restaurant.name
+            %p.card-text.text-muted.mb-3= truncate(restaurant.description, length: 100)
+
+            %ul.list-unstyled.mb-0.mt-auto
+              %li.mb-2
+                %i.fas.fa-map-marker-alt.me-2.text-danger
+                %strong Location:
+                = " #{restaurant.location}"
+
+              %li.mb-2
+                %i.fas.fa-utensils.me-2.text-success
+                %strong Cuisine:
+                = " #{restaurant.cuisine_type}"
+
+              %li.mb-2
+                %i.fas.fa-star.me-2.text-warning
+                %strong Rating:
+                = " #{restaurant.rating}"
+
+              %li
+                %i.fas.fa-toggle-on.me-2.text-info
+                %strong Status:
+                = " #{restaurant.status.humanize}"

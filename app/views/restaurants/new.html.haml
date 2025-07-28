@@ -1,0 +1,30 @@
+%h2.text-center.text-primary.mt-4.mb-5 Create New Restaurant
+
+.container
+  .row.justify-content-center
+    .col-md-8.col-lg-6
+      = form_with model: @restaurant, local: true, html: { class: "p-4 border rounded bg-light" } do |form|
+        - if @restaurant.errors.any?
+          .alert.alert-danger
+            %h5.mb-2 Errors:
+            %ul.mb-0
+              - @restaurant.errors.full_messages.each do |msg|
+                %li= msg
+
+        .mb-3
+          = form.label :name, class: "form-label"
+          = form.text_field :name, class: "form-control", placeholder: "Restaurant name"
+
+        .mb-3
+          = form.label :description, class: "form-label"
+          = form.text_area :description, class: "form-control", rows: 3, placeholder: "Short description"
+
+        .mb-3
+          = form.label :location, class: "form-label"
+          = form.text_field :location, class: "form-control", placeholder: "Location"
+
+        .mb-3
+          = form.label :cuisine_type, class: "form-label"
+          = form.text_field :cuisine_type, class: "form-control", placeholder: "Cuisine type (e.g. Italian)"
+
+        = form.submit "Create Restaurant", class: "btn btn-primary w-100 fw-bold"
