@@ -1,54 +1,20 @@
-# spec/requests/restaurants_spec.rb
 require 'rails_helper'
 
-RSpec.describe 'Restaurants', type: :request do
-  let(:user) { create(:user) }
+RSpec.describe Restaurant, type: :model do
+  subject { build(:restaurant) }
 
-  before { sign_in user }
+  it { should belong_to(:user) }
 
-  describe 'GET /restaurants/new' do
-    it 'renders the new restaurant form' do
-      get new_restaurant_path
-      expect(response).to have_http_status(:ok)
-    end
+  it { should validate_presence_of(:name) }
+  it { should validate_presence_of(:location) }
+  it { should validate_presence_of(:cuisine_type) }
+  it { should validate_numericality_of(:rating).is_greater_than_or_equal_to(0).is_less_than_or_equal_to(5).allow_nil }
+
+  it 'has valid AASM states' do
+    expect(subject.aasm.states.map(&:name)).to include(:open, :closed, :archived)
   end
 
-  describe 'POST /restaurants' do
-    context 'with valid data' do
-      it 'creates a new restaurant and redirects' do
-        expect do
-          post restaurants_path, params: {
-            restaurant: {
-              name: 'New Spot',
-              description: 'Tasty food',
-              location: 'Delhi',
-              cuisine_type: 'Indian'
-            }
-          }
-        end.to change(Restaurant, :count).by(1)
-
-        expect(Restaurant.last.status).to eq('open')
-        expect(response).to redirect_to(root_path)
-        follow_redirect!
-        expect(response.body).to include('Your Restaurant was created and is open for business.')
-      end
-    end
-
-    context 'with invalid data' do
-      it 'does not create a restaurant' do
-        expect do
-          post restaurants_path, params: {
-            restaurant: {
-              name: '',
-              description: '',
-              location: '',
-              cuisine_type: ''
-            }
-          }
-        end.not_to change(Restaurant, :count)
-
-        expect(response.body).to include("can't be blank")
-      end
-    end
+  it 'defaults to open status' do
+    expect(subject.status).to eq('open')
   end
 end
