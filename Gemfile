@@ -97,3 +97,5 @@ gem 'mini_magick'
 gem 'fastimage'
 
 gem 'image_processing', '~> 1.2'
+
+gem 'aasm'

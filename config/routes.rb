@@ -9,6 +9,7 @@ Rails.application.routes.draw do
   end
 
   get '/homepage', to: 'homepage#index'
+  resources :restaurants, only: %i[index new create]
 
   namespace :api do
     namespace :v1 do
