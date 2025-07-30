@@ -1,9 +1,17 @@
-# app/controllers/restaurants_controller.rb
 class RestaurantsController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    @restaurants = Restaurant.all
+    sortable_columns = %w[id name rating status]
+    @sort_column = sortable_columns.include?(params[:sort]) ? params[:sort] : 'id'
+
+    @sort_direction = if @sort_column == 'rating'
+                        'desc'
+                      else
+                        'asc'
+                      end
+
+    @restaurants = Restaurant.order("#{@sort_column} #{@sort_direction}").paginate(page: params[:page], per_page: 6)
   end
 
   def new
