@@ -19,7 +19,9 @@ module Build
           date_of_birth: Faker::Date.birthday(min_age: 1, max_age: 99),
           phone_number: Faker::PhoneNumber.cell_phone_in_e164,
           password: 'password',
-          password_confirmation: 'password'
+          password_confirmation: 'password',
+          role_type: :customer,
+          account_status: :active
         )
       end
     end
