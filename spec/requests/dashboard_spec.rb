@@ -1,10 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe 'Dashboard Access', type: :request do
-  let(:staff) { create(:user, role_type: :staff, status: :active, email: 'staff@example.com', password: 'password123') }
-  let(:customer) do
-    create(:user, role_type: :customer, status: :active, email: 'customer@example.com', password: 'password123')
-  end
+  let(:password) { Faker::Internet.password(min_length: 8) }
+
+  let(:staff)    { create(:user, role_type: :staff, status: :active, password: password) }
+  let(:customer) { create(:user, role_type: :customer, status: :active, password: password) }
 
   describe 'GET /dashboard' do
     context 'when staff is signed in' do
@@ -42,21 +42,36 @@ RSpec.describe 'Dashboard Access', type: :request do
   describe 'POST /users/sign_in' do
     context 'when email is incorrect' do
       it 'does not sign in the user and re-renders the login page' do
-        post user_session_path, params: { user: { email: 'wrong@example.com', password: 'password123' } }
+        post user_session_path, params: {
+          user: {
+            email: Faker::Internet.email,
+            password: password
+          }
+        }
         expect(response.body).to include('Invalid Email or password')
       end
     end
 
     context 'when password is incorrect' do
       it 'does not sign in the user and re-renders the login page' do
-        post user_session_path, params: { user: { email: staff.email, password: 'wrongpass' } }
+        post user_session_path, params: {
+          user: {
+            email: staff.email,
+            password: 'wrongpassword'
+          }
+        }
         expect(response.body).to include('Invalid Email or password')
       end
     end
 
     context 'when both email and password are incorrect' do
       it 'does not sign in the user and re-renders the login page' do
-        post user_session_path, params: { user: { email: 'wrong@example.com', password: 'wrongpass' } }
+        post user_session_path, params: {
+          user: {
+            email: Faker::Internet.email,
+            password: 'wrongpassword'
+          }
+        }
         expect(response.body).to include('Invalid Email or password')
       end
     end
