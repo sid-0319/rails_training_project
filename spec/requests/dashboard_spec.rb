@@ -1,7 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe 'Dashboard Access', type: :request do
-  let(:admin) { create(:user, role_type: :admin, status: :active, email: 'admin@example.com', password: 'password123') }
   let(:staff) { create(:user, role_type: :staff, status: :active, email: 'staff@example.com', password: 'password123') }
   let(:customer) do
     create(:user, role_type: :customer, status: :active, email: 'customer@example.com', password: 'password123')
