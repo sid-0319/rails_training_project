@@ -1,5 +1,8 @@
 class ApplicationController < ActionController::Base
   before_action :configure_permitted_parameters, if: :devise_controller?
+  before_action :block_sign_in_without_role, if: lambda {
+    devise_controller? && action_name == 'new' && params[:role].blank?
+  }
   before_action :store_requested_role, if: -> { devise_controller? && params[:role].present? }
   before_action :authenticate_admin_if_api!
 
@@ -49,6 +52,11 @@ class ApplicationController < ActionController::Base
 
   def store_requested_role
     session[:login_role] = params[:role]
+  end
+
+  def block_sign_in_without_role
+    flash[:alert] = 'You are not authorized to sign in from this route.'
+    redirect_to root_path and return
   end
 
   def authenticate_admin_if_api!
