@@ -1,10 +1,24 @@
 require 'rails_helper'
 
 RSpec.describe 'Dashboard Access', type: :request do
+  include Devise::Test::IntegrationHelpers
   let(:password) { Faker::Internet.password(min_length: 8) }
 
-  let(:staff)    { create(:user, role_type: :staff, status: :active, password: password) }
-  let(:customer) { create(:user, role_type: :customer, status: :active, password: password) }
+  let(:staff) do
+    create(:user,
+           role_type: :staff,
+           account_status: :active,
+           password: password,
+           password_confirmation: password)
+  end
+
+  let(:customer) do
+    create(:user,
+           role_type: :customer,
+           account_status: :active,
+           password: password,
+           password_confirmation: password)
+  end
 
   describe 'GET /dashboard' do
     context 'when staff is signed in' do
