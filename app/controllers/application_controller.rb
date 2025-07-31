@@ -1,8 +1,13 @@
 class ApplicationController < ActionController::Base
   before_action :configure_permitted_parameters, if: :devise_controller?
+
   before_action :block_sign_in_without_role, if: lambda {
-    devise_controller? && action_name == 'new' && params[:role].blank?
+    devise_controller? &&
+      is_a?(Devise::SessionsController) &&
+      action_name == 'new' &&
+      params[:role].blank?
   }
+
   before_action :store_requested_role, if: -> { devise_controller? && params[:role].present? }
   before_action :authenticate_admin_if_api!
 
