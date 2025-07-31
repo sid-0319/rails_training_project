@@ -8,7 +8,7 @@
       = f.select :status, options_for_select([["All", ""], ["Available", "available"], ["Reserved", "reserved"], ["Occupied", "occupied"]], @status_filter), {}, class: "form-select", style: "width: 200px;"
       = f.submit "Filter", class: "btn btn-primary", style: "padding: 6px 16px; font-weight: 500;"
 
-    = button_tag "Add Table", type: :button, class: "btn btn-success", style: "padding: 6px 16px; font-weight: 500;"
+    = button_tag "Add Table", type: :button, class: "btn btn-success", data: { bs_toggle: "modal", bs_target: "#addTableModal" }, style: "padding: 6px 16px; font-weight: 500;"
 
   %table{ style: "width: 100%; border-collapse: collapse; margin-top: 20px;" }
     %thead
@@ -74,3 +74,27 @@
     color: #6c757d !important;
     cursor: default !important;
   }
+
+.modal.fade#addTableModal{ tabindex: "-1", aria: { labelledby: "addTableModalLabel", hidden: "true" } }
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %h5.modal-title#addTableModalLabel Add New Table
+        %button.btn-close{ type: "button", data: { bs_dismiss: "modal" }, aria: { label: "Close" } }
+      = form_with model: [@restaurant, @restaurant.restaurant_tables.new], url: restaurant_restaurant_tables_path(@restaurant), local: true do |f|
+        .modal-body
+          .mb-3
+            = f.label :table_number, "Table Number", class: "form-label"
+            = f.text_field :table_number, class: "form-control", required: true
+
+          .mb-3
+            = f.label :seats, "Seats", class: "form-label"
+            = f.number_field :seats, class: "form-control", required: true
+
+          .mb-3
+            = f.label :status, "Status", class: "form-label"
+            = f.select :status, RestaurantTable.statuses.keys.map { |s| [s.humanize, s] }, {}, class: "form-select", required: true
+
+        .modal-footer
+          %button.btn.btn-secondary{ type: "button", data: { bs_dismiss: "modal" } } Close
+          = f.submit "Create Table", class: "btn btn-primary"

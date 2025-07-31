@@ -18,11 +18,11 @@ class RestaurantTablesController < ApplicationController
   end
 
   def new
-    @table = @restaurant.tables.new
+    @table = @restaurant.restaurant_tables.new
   end
 
   def create
-    @table = @restaurant.tables.new(table_params)
+    @table = @restaurant.restaurant_tables.new(table_params)
     if @table.save
       redirect_to restaurant_restaurant_tables_path(@restaurant), notice: 'Table created successfully.'
     else
@@ -62,7 +62,7 @@ class RestaurantTablesController < ApplicationController
   end
 
   def table_params
-    params.require(:table).permit(:table_number, :seats, :status)
+    params.require(:restaurant_table).permit(:table_number, :seats, :status)
   end
 
   def sort_column

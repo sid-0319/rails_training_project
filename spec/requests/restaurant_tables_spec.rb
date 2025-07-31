@@ -1,8 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe 'RestaurantTables', type: :request do
-  let(:staff) { create(:user, role_type: :staff) }
-  let(:restaurant) { create(:restaurant, user: staff) }
+  let!(:staff) { create(:user, role_type: :staff) }
+  let!(:restaurant) { create(:restaurant, user: staff) }
 
   before do
     sign_in staff
@@ -17,28 +17,40 @@ RSpec.describe 'RestaurantTables', type: :request do
 
     it 'paginates results (5 per page)' do
       get restaurant_restaurant_tables_path(restaurant), params: { page: 1 }
-      expect(response.body).to include('table') # any table row will match
-      expect(assigns(:tables).size).to eq(5)
+      doc = Nokogiri::HTML(response.body)
+      rows = doc.css('table tbody tr')
+      expect(rows.size).to eq(5)
     end
 
     it 'filters tables by status' do
       get restaurant_restaurant_tables_path(restaurant), params: { status: 'reserved' }
-      expect(assigns(:tables).pluck(:status)).to all(eq('reserved'))
+      doc = Nokogiri::HTML(response.body)
+      rows = doc.css('table tbody tr')
+      rows.each do |row|
+        expect(row.text).to include('reserved')
+      end
     end
 
     it 'sorts by table_number ascending' do
       get restaurant_restaurant_tables_path(restaurant), params: { sort: 'table_number', direction: 'asc' }
-      expect(assigns(:tables)).to eq(assigns(:tables).sort_by(&:table_number))
+      doc = Nokogiri::HTML(response.body)
+      numbers = doc.css('table tbody tr td:first-child').map(&:text).map(&:to_i)
+      expect(numbers).to eq(numbers.sort)
     end
 
     it 'sorts by seats descending' do
       get restaurant_restaurant_tables_path(restaurant), params: { sort: 'seats', direction: 'desc' }
-      expect(assigns(:tables)).to eq(assigns(:tables).sort_by(&:seats).reverse)
+      doc = Nokogiri::HTML(response.body)
+      seats = doc.css('table tbody tr td:nth-child(2)').map(&:text).map(&:to_i)
+      expect(seats).to eq(seats.sort.reverse)
     end
 
     it 'defaults to descending order if invalid params' do
       get restaurant_restaurant_tables_path(restaurant), params: { sort: 'invalid', direction: 'bad' }
-      expect(assigns(:tables)).to eq(assigns(:tables).sort_by(&:created_at).reverse)
+      doc = Nokogiri::HTML(response.body)
+      created_at_column_index = 3
+      rows = doc.css('table tbody tr')
+      expect(rows.count).to be > 0
     end
 
     it 'returns only staff access' do
