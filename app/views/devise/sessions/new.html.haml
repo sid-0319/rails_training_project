@@ -29,5 +29,6 @@
             .text-center
               = f.submit "Log in", class: "btn btn-success mt-3 w-50"
 
-          .text-center.mt-3
-            = link_to "Don't have an account? Sign up", new_user_registration_path, class: "text-decoration-none"
+          - unless params[:role] == 'staff'
+            .text-center.mt-3
+              = link_to "Don't have an account? Sign up", new_user_registration_path, class: "text-decoration-none"

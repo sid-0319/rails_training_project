@@ -21,12 +21,14 @@
           %img{ src: "https://download.logo.wine/logo/Ruby_on_Rails/Ruby_on_Rails-Logo.wine.png", alt: "Rails Logo", height: "40", class: "me-2" }
 
         #navbarNav.d-none.d-md-flex.align-items-center
-          %ul.navbar-nav.ms-auto.flex-row.align-items-center
+          %ul.navbar-nav.ms-auto.flex-row.flex-wrap.align-items-center.gap-2
             - unless user_signed_in?
-              %li.nav-item.mx-2
-                = link_to "Sign Up", new_user_registration_path, class: "nav-link text-white"
               %li.nav-item
-                = link_to "Sign In", new_user_session_path, class: "nav-link text-white"
+                = link_to "Sign Up", new_user_registration_path, class: "nav-link text-white px-2"
+              %li.nav-item
+                = link_to "Staff Login", new_user_session_path(role: :staff), class: "nav-link text-white px-2"
+              %li.nav-item
+                = link_to "Customer Login", new_user_session_path(role: :customer), class: "nav-link text-white px-2"
             - if user_signed_in?
               %li.nav-item.ms-3
                 - if current_user.avatar.attached?
@@ -51,16 +53,30 @@
                       %li.nav-item
                         = link_to "Update Personal Data", edit_user_registration_path, class: "nav-link"
 
-                %li.nav-item.mb-2
-                  %a.nav-link.fw-bold{"data-bs-toggle" => "collapse", href: "#booksMenu", role: "button"}
-                    %i.fas.fa-utensils.me-2
-                    Restaurants
-                  #booksMenu.collapse.ms-3
-                    %ul.nav.flex-column
-                      %li.nav-item
-                        = link_to "Restaurants", restaurants_path, class: "nav-link"
-                      %li.nav-item
-                        = link_to "Create Restaurant", new_restaurant_path, class: "nav-link"
+                - if current_user.customer?
+                  %li.nav-item.mb-2
+                    %a.nav-link.fw-bold{"data-bs-toggle" => "collapse", href: "#ordersMenu", role: "button"}
+                      %i.fas.fa-box.me-2
+                      Orders
+                    #ordersMenu.collapse.ms-3
+                      %ul.nav.flex-column
+                        %li.nav-item
+                          = link_to "List of Orders", "#", class: "nav-link"
+                        %li.nav-item
+                          = link_to "Current Orders", "#", class: "nav-link"
+                        %li.nav-item
+                          = link_to "Past Orders", "#", class: "nav-link"
+                - else
+                  %li.nav-item.mb-2
+                    %a.nav-link.fw-bold{"data-bs-toggle" => "collapse", href: "#booksMenu", role: "button"}
+                      %i.fas.fa-utensils.me-2
+                      Restaurants
+                    #booksMenu.collapse.ms-3
+                      %ul.nav.flex-column
+                        %li.nav-item
+                          = link_to "Restaurants", restaurants_path, class: "nav-link"
+                        %li.nav-item
+                          = link_to "Create Restaurant", new_restaurant_path, class: "nav-link"
 
                 %li.nav-item.mt-2
                   = button_to destroy_user_session_path, method: :delete, class: "nav-link text-danger fw-bold", data: { turbo: false } do
@@ -89,16 +105,30 @@
                   %li.nav-item
                     = link_to "Update Personal Data", edit_user_registration_path, class: "nav-link"
 
-            %li.nav-item.mb-2
-              %a.nav-link.fw-bold{"data-bs-toggle" => "collapse", href: "#mBooksMenu", role: "button"}
-                %i.fas.fa-utensils.me-2
-                Restaurants
-              #mBooksMenu.collapse.ms-3
-                %ul.nav.flex-column
-                  %li.nav-item
-                    = link_to "Restaurants", restaurants_path, class: "nav-link"
-                  %li.nav-item
-                    = link_to "Create Restaurant", new_restaurant_path, class: "nav-link"
+            - if current_user.customer?
+              %li.nav-item.mb-2
+                %a.nav-link.fw-bold{"data-bs-toggle" => "collapse", href: "#mOrdersMenu", role: "button"}
+                  %i.fas.fa-box.me-2
+                  Orders
+                #mOrdersMenu.collapse.ms-3
+                  %ul.nav.flex-column
+                    %li.nav-item
+                      = link_to "List of Orders", "#", class: "nav-link"
+                    %li.nav-item
+                      = link_to "Current Orders", "#", class: "nav-link"
+                    %li.nav-item
+                      = link_to "Past Orders", "#", class: "nav-link"
+            - else
+              %li.nav-item.mb-2
+                %a.nav-link.fw-bold{"data-bs-toggle" => "collapse", href: "#mBooksMenu", role: "button"}
+                  %i.fas.fa-utensils.me-2
+                  Restaurants
+                #mBooksMenu.collapse.ms-3
+                  %ul.nav.flex-column
+                    %li.nav-item
+                      = link_to "Restaurants", restaurants_path, class: "nav-link"
+                    %li.nav-item
+                      = link_to "Create Restaurant", new_restaurant_path, class: "nav-link"
 
             %li.nav-item.mt-2
               = button_to destroy_user_session_path, method: :delete, class: "nav-link text-danger fw-bold", data: { turbo: false } do
