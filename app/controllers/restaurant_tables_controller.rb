@@ -32,6 +32,19 @@ class RestaurantTablesController < ApplicationController
 
   def edit; end
 
+  def update
+    if @table.update(table_params)
+      redirect_to restaurant_restaurant_tables_path(@restaurant), notice: 'Table updated successfully.'
+    else
+      render :edit
+    end
+  end
+
+  def destroy
+    @table.destroy
+    redirect_to restaurant_restaurant_tables_path(@restaurant), notice: 'Table deleted.'
+  end
+
   private
 
   def require_staff!
