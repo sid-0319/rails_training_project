@@ -13,7 +13,10 @@ Rails.application.routes.draw do
     root to: 'dashboard#index', as: :authenticated_root
   end
 
-  resources :restaurants, only: %i[index new create]
+  resources :restaurants, only: %i[index new create] do
+    resources :restaurant_tables, controller: 'restaurant_tables', only: %i[index new create edit update destroy]
+  end
+
   resource :avatar, only: %i[edit update destroy]
 
   namespace :api do

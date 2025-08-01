@@ -99,3 +99,5 @@ gem 'fastimage'
 gem 'image_processing', '~> 1.2'
 
 gem 'aasm'
+
+gem 'will_paginate', '~> 3.3'

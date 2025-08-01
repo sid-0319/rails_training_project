@@ -1,10 +1,19 @@
 .container
-  %h2.text-center.my-4.text-primary Your Restaurants
+  %h2.text-center.my-4.text-primary.fw-bold.animate__animated.animate__fadeInDown Your Restaurants
+
+  / Sorting dropdown
+  .d-flex.justify-content-end.mb-3
+    .dropdown
+      %button.btn.btn-outline-secondary.dropdown-toggle{ type: "button", data: { "bs_toggle": "dropdown" } }
+        Sort by
+      %ul.dropdown-menu
+        %li= link_to "Name", restaurants_path(sort: "name"), class: "dropdown-item"
+        %li= link_to "Rating", restaurants_path(sort: "rating"), class: "dropdown-item"
 
   .row
     - @restaurants.each do |restaurant|
       .col-sm-12.col-md-6.col-lg-4.mb-4
-        .card.h-100.border-0.shadow-lg.rounded-4
+        .card.h-100.border-0.shadow.transition-card.rounded-4
           .card-body.p-4.d-flex.flex-column
             %h5.card-title.mb-2.text-dark.fw-bold.text-truncate= restaurant.name
             %p.card-text.text-muted.mb-3= truncate(restaurant.description, length: 100)
@@ -25,7 +34,67 @@
                 %strong Rating:
                 = " #{restaurant.rating}"
 
-              %li
+              %li.mb-3
                 %i.fas.fa-toggle-on.me-2.text-info
                 %strong Status:
                 = " #{restaurant.status.humanize}"
+
+            - if current_user&.staff?
+              = link_to "View Tables", restaurant_restaurant_tables_path(restaurant), class: "btn btn-sm btn-primary mt-3 fw-semibold shadow-sm"
+
+  / Pagination
+  .d-flex.justify-content-center.mt-4{ style: "font-family: Arial, sans-serif;" }
+    = will_paginate @restaurants, params: { sort: params[:sort] }
+
+  :css
+    .transition-card {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .transition-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+    .card-body {
+      transition: background-color 0.3s ease;
+    }
+    .card:hover .card-body {
+      background-color: #f8f9fa;
+    }
+
+    .pagination {
+      display: flex !important;
+      list-style: none !important;
+      padding-left: 0 !important;
+      border-radius: 0.375rem !important;
+      gap: 0.5rem !important;
+    }
+    .pagination li {
+      margin: 0 !important;
+    }
+    .pagination a,
+    .pagination span {
+      color: #0d6efd !important;
+      padding: 0.375rem 0.75rem !important;
+      border: 1px solid #dee2e6 !important;
+      border-radius: 0.375rem !important;
+      text-decoration: none !important;
+      cursor: pointer !important;
+      min-width: 2.5rem !important;
+      text-align: center !important;
+      display: inline-block !important;
+      transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+    }
+    .pagination a:hover {
+      background-color: #e9f5ff !important;
+      border-color: #0d6efd !important;
+    }
+    .pagination .active span {
+      background-color: #0d6efd !important;
+      border-color: #0d6efd !important;
+      color: white !important;
+      cursor: default !important;
+    }
+    .pagination .disabled span {
+      color: #6c757d !important;
+      cursor: default !important;
+    }

@@ -2,6 +2,7 @@ class Restaurant < ApplicationRecord
   include AASM
 
   belongs_to :user
+  has_many :restaurant_tables, class_name: 'RestaurantTable', foreign_key: 'restaurant_id'
 
   validates :name, :description, :location, :cuisine_type, presence: true
 

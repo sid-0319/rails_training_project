@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_29_070915) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_30_120410) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -48,6 +48,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_29_070915) do
     t.boolean "published"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "restaurant_tables", force: :cascade do |t|
+    t.string "table_number"
+    t.integer "seats"
+    t.integer "status"
+    t.bigint "restaurant_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["restaurant_id"], name: "index_restaurant_tables_on_restaurant_id"
   end
 
   create_table "restaurants", force: :cascade do |t|
@@ -95,5 +105,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_29_070915) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "restaurant_tables", "restaurants"
   add_foreign_key "restaurants", "users"
 end

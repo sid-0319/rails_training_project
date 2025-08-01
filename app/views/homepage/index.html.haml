@@ -18,7 +18,7 @@
             %i.fas.fa-bars
 
         = link_to root_path, class: "navbar-brand fw-bold text-warning" do
-          %img{ src: "https://download.logo.wine/logo/Ruby_on_Rails/Ruby_on_Rails-Logo.wine.png", alt: "Rails Logo", height: "40", class: "me-2" }
+          %i.fa-solid.fa-bowl-food.me-2{ style: "font-size: 1.8rem;" }
 
         #navbarNav.d-none.d-md-flex.align-items-center
           %ul.navbar-nav.ms-auto.flex-row.flex-wrap.align-items-center.gap-2
@@ -139,5 +139,5 @@
       .container.mt-5
         .row.justify-content-center
           .col-md-8.text-center
-            %h2.mb-4 Welcome to Custom Rails App!
+            %h2.mb-4 Welcome!
             = link_to "Get Started", new_user_registration_path, class: "btn btn-warning btn-lg mt-3 shadow"
