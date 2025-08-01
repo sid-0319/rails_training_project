@@ -2,7 +2,7 @@
   %h2{ style: "font-size: 28px; color: #2c3e50; margin-bottom: 30px; text-align: center;" }
     Tables for #{@restaurant.name}
 
-  .d-flex.justify-content-between.align-items-center.mb-4.flex-wrap{ style: "gap: 15px; margin-bottom: 25px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;" }
+  .d-flex.justify-content-between.align-items-center.mb-4.flex-wrap{ style: "gap: 15px;" }
     = form_with url: restaurant_restaurant_tables_path(@restaurant), method: :get, local: true, style: "display: flex; align-items: center; gap: 12px; flex-wrap: wrap;" do |f|
       %label{ for: "status", style: "margin-bottom: 0; font-weight: 600;" } Filter by Status:
       = f.select :status, options_for_select([["All", ""], ["Available", "available"], ["Reserved", "reserved"], ["Occupied", "occupied"]], @status_filter), {}, class: "form-select", style: "width: 200px;"
@@ -13,10 +13,11 @@
   %table{ style: "width: 100%; border-collapse: collapse; margin-top: 20px;" }
     %thead
       %tr{ style: "background-color: #f8f9fa;" }
-        %th{ style: "padding: 12px; border: 1px solid #dee2e6;" }= link_to "ID", { sort: "id", status: params[:status] }
-        %th{ style: "padding: 12px; border: 1px solid #dee2e6;" }= link_to "Table Number", { sort: "table_number", status: params[:status] }
-        %th{ style: "padding: 12px; border: 1px solid #dee2e6;" }= link_to "Seats", { sort: "seats", status: params[:status] }
-        %th{ style: "padding: 12px; border: 1px solid #dee2e6;" }= link_to "Status", { sort: "status", status: params[:status] }
+        %th{ style: "padding: 12px; border: 1px solid #dee2e6;" }= link_to "ID", { sort: "id", status: params[:status] }, style: "text-decoration: none; color: inherit;"
+        %th{ style: "padding: 12px; border: 1px solid #dee2e6;" }= link_to "Table Number", { sort: "table_number", status: params[:status] }, style: "text-decoration: none; color: inherit;"
+        %th{ style: "padding: 12px; border: 1px solid #dee2e6;" }= link_to "Seats", { sort: "seats", status: params[:status] }, style: "text-decoration: none; color: inherit;"
+        %th{ style: "padding: 12px; border: 1px solid #dee2e6;" }= link_to "Status", { sort: "status", status: params[:status] }, style: "text-decoration: none; color: inherit;"
+        %th{ style: "padding: 12px; border: 1px solid #dee2e6;" } Actions
     %tbody
       - if @tables.any?
         - @tables.each do |table|
@@ -25,9 +26,45 @@
             %td{ style: "padding: 10px; border: 1px solid #dee2e6;" }= table.table_number
             %td{ style: "padding: 10px; border: 1px solid #dee2e6;" }= table.seats
             %td{ style: "padding: 10px; border: 1px solid #dee2e6;" }= table.status.humanize
+            %td{ style: "padding: 10px; border: 1px solid #dee2e6;" }
+              .d-flex.align-items-center.gap-2.flex-wrap
+                = button_tag type: :button, class: "btn btn-sm btn-warning", data: { bs_toggle: "modal", bs_target: "#editTableModal-#{table.id}" } do
+                  %i.fas.fa-edit.me-1
+                  Edit
+                = button_to restaurant_restaurant_table_path(@restaurant, table),
+                            method: :delete,
+                            data: { confirm: "Are you sure you want to delete this table?" },
+                            class: "btn btn-sm btn-danger" do
+                  %i.fas.fa-trash.me-1
+                  Delete
+
+          / Modal for Editing Table
+          .modal.fade{id: "editTableModal-#{table.id}", tabindex: "-1", aria: { labelledby: "editTableModalLabel-#{table.id}", hidden: "true" } }
+            .modal-dialog
+              .modal-content
+                .modal-header
+                  %h5.modal-title{id: "editTableModalLabel-#{table.id}"} Edit Table ##{table.table_number}
+                  %button.btn-close{ type: "button", data: { bs_dismiss: "modal" }, aria: { label: "Close" } }
+                = form_with model: [@restaurant, table], url: restaurant_restaurant_table_path(@restaurant, table), method: :patch, local: true do |f|
+                  .modal-body
+                    .mb-3
+                      = f.label :table_number, "Table Number", class: "form-label"
+                      = f.text_field :table_number, class: "form-control", required: true
+
+                    .mb-3
+                      = f.label :seats, "Seats", class: "form-label"
+                      = f.number_field :seats, class: "form-control", required: true
+
+                    .mb-3
+                      = f.label :status, "Status", class: "form-label"
+                      = f.select :status, RestaurantTable.statuses.keys.map { |s| [s.humanize, s] }, {}, class: "form-select", required: true
+
+                  .modal-footer
+                    %button.btn.btn-secondary{ type: "button", data: { bs_dismiss: "modal" } } Close
+                    = f.submit "Update Table", class: "btn btn-primary"
       - else
         %tr
-          %td{ colspan: 4, style: "padding: 15px; text-align: center; color: gray; border: 1px solid #dee2e6;" }
+          %td{ colspan: 5, style: "padding: 15px; text-align: center; color: gray; border: 1px solid #dee2e6;" }
             No tables found for the selected filter.
 
 .d-flex.justify-content-center.mt-4{ style: "font-family: Arial, sans-serif;" }
