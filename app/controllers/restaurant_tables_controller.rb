@@ -40,11 +40,6 @@ class RestaurantTablesController < ApplicationController
     end
   end
 
-  def destroy
-    @table.destroy
-    redirect_to restaurant_restaurant_tables_path(@restaurant), notice: 'Table deleted.'
-  end
-
   private
 
   def require_staff!
@@ -57,7 +52,7 @@ class RestaurantTablesController < ApplicationController
   end
 
   def set_table
-    @table = @restaurant.tables.find_by(id: params[:id])
+    @table = @restaurant.restaurant_tables.find_by(id: params[:id])
     redirect_to restaurant_restaurant_tables_path(@restaurant), alert: 'Table not found.' unless @table
   end
 
