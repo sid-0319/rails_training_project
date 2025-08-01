@@ -1,0 +1,148 @@
+%head
+  %link{rel: "stylesheet", href: "https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css"}
+  %link{rel: "stylesheet", href: "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"}
+  %style
+    :css
+      @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Playfair+Display:wght@700&display=swap');
+
+      body {
+        font-family: 'Montserrat', sans-serif;
+        color: #fff;
+        background-color: #0b1a2a;
+      }
+      
+      .menu-container {
+        padding: 5rem 3rem;
+        background-color: #0b1a2a;
+      }
+
+      .menu-page {
+        background-color: #fff;
+        color: #000;
+        padding: 4rem 5rem;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        position: relative;
+      }
+
+      .main-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 5rem;
+        line-height: 1;
+        font-weight: 700;
+        color: #000;
+      }
+
+      .sub-title {
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 700;
+        letter-spacing: 4px;
+        font-size: 1.2rem;
+        margin-top: -1rem;
+        margin-bottom: 2rem;
+      }
+
+      .section-header {
+        background-color: #c93b33;
+        color: #fff;
+        padding: 0.5rem 1rem;
+        font-weight: 700;
+        letter-spacing: 2px;
+        font-size: 1.2rem;
+        margin-top: 2rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .menu-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center; /* Aligns items vertically in the middle */
+        margin-bottom: 1rem;
+        border-bottom: 1px dashed #e0e0e0;
+        padding-bottom: 0.5rem;
+      }
+
+      .item-name {
+        font-weight: 700;
+        font-size: 1.1rem;
+        flex-grow: 1;
+        margin-right: 1rem;
+      }
+      
+      .item-price {
+        font-weight: 700;
+        font-size: 1.1rem;
+        white-space: nowrap;
+      }
+      
+      .menu-footer {
+        background-color: #0b1a2a;
+        color: #fff;
+        padding: 1rem;
+        text-align: center;
+        font-weight: 700;
+        letter-spacing: 2px;
+        margin-top: 3rem;
+      }
+
+      /* Simple icon for dietary and availability */
+      .dish-icon-veg {
+        color: #28a745;
+      }
+      .dish-icon-non-veg {
+        color: #dc3545;
+      }
+      .dish-icon-unavailable {
+        color: #888;
+      }
+
+      /* Action buttons for editing */
+      .action-buttons {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        white-space: nowrap;
+      }
+      .action-buttons a, .action-buttons button {
+        font-size: 0.9rem;
+      }
+%div.container-fluid.menu-container
+  %div.row.justify-content-center
+    %div.col-lg-8.col-md-10
+      %div.menu-page
+        %div.d-flex.justify-content-between.align-items-center.mb-5
+          %div
+            %h1.main-title= @restaurant.name
+            %h2.sub-title DINNER MENU
+          %div
+            = link_to '➕ Add New Item', new_restaurant_menu_item_path(@restaurant), class: "btn btn-outline-dark"
+
+        - if @menu_items.any?
+          - @menu_items.group_by(&:category).each do |category, items|
+            %div.section-header
+              = category
+            - items.each do |item|
+              %div.menu-item
+                %div
+                  %span.item-name= item.item_name
+                  - if item.is_vegetarian
+                    %i.fas.fa-leaf.dish-icon-veg.ms-2
+                  - else
+                    %i.fas.fa-drumstick-bite.dish-icon-non-veg.ms-2
+                  - unless item.available
+                    %i.fas.fa-ban.dish-icon-unavailable.ms-2
+                  %p.text-muted.mt-1= item.description
+                %div.d-flex.align-items-center
+                  %span.item-price= "₹#{item.price}"
+                  %div.action-buttons.ms-3
+                    = link_to '✏️', edit_restaurant_menu_item_path(@restaurant, item), class: "btn btn-sm btn-outline-secondary"
+                    %form{ action: restaurant_menu_item_path(@restaurant, item), method: "post", onsubmit: "return confirm('Are you sure?');", class: "d-inline" }
+                      = hidden_field_tag :_method, "delete"
+                      = hidden_field_tag :authenticity_token, form_authenticity_token
+                      %button.btn.btn-sm.btn-outline-danger{ type: "submit" }
+                        🗑️
+        - else
+          %div.alert.alert-info.text-center.mt-5
+            %i.fas.fa-info-circle.me-2
+            No menu items found. Why not add some?
+
+        %div.menu-footer ENJOY YOUR MEAL !

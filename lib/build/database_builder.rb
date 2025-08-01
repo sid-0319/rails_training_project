@@ -1,12 +1,10 @@
-# frozen_string_literal: true
-
 module Build
   class DatabaseBuilder
     def reset_data
       puts 'Cleaning database...'
 
-      # Delete in correct order to avoid foreign key violation
       RestaurantTable.destroy_all
+      MenuItem.destroy_all
       Restaurant.destroy_all
       User.destroy_all
     end
@@ -72,11 +70,33 @@ module Build
       puts 'Done creating tables!'
     end
 
+    def create_menu_items_for_restaurants
+      puts 'Creating menu items for each restaurant...'
+
+      categories = ['Starter', 'Main Course', 'Dessert', 'Drinks']
+
+      Restaurant.find_each do |restaurant|
+        10.times do
+          restaurant.menu_items.create!(
+            item_name: Faker::Food.dish,
+            description: Faker::Food.description,
+            price: rand(100..999),
+            category: categories.sample,
+            available: [true, false].sample,
+            is_vegetarian: [true, false].sample
+          )
+        end
+      end
+
+      puts 'Done creating menu items!'
+    end
+
     def execute
       reset_data
       users = create_users
       create_restaurants(users)
       create_tables_for_restaurants
+      create_menu_items_for_restaurants
     end
 
     def run

@@ -22,6 +22,12 @@ class ApplicationController < ActionController::Base
     devise_parameter_sanitizer.permit(:account_update, keys: added_attrs)
   end
 
+  def authorize_staff_or_admin!
+    return if current_user&.staff? || current_user&.admin?
+
+    redirect_to root_path, alert: 'Access denied.'
+  end
+
   def after_sign_in_path_for(resource)
     role = session[:login_role]
 
