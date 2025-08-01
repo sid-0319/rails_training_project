@@ -1,0 +1,48 @@
+.container.my-5
+  .row.justify-content-center
+    .col-lg-10.col-md-11
+      .card.border-0.shadow-lg.rounded-4
+        .card-body.p-5
+          .row
+            .col-lg-6
+              %h3.card-title.text-center.fw-bold.mb-2 Menu Item
+              = form_with model: [@restaurant, @menu_item], local: true do |f|
+                .row.g-4
+                  .col-md-6
+                    .mb-3
+                      = f.label :item_name, class: "form-label"
+                      = f.text_field :item_name, class: "form-control form-control-md", placeholder: "e.g., Spicy Tuna Roll"
+                  
+                  .col-md-6
+                    .mb-3
+                      = f.label :price, class: "form-label"
+                      .input-group.input-group-md
+                        %span.input-group-text Rs.
+                        = f.number_field :price, step: 0.01, class: "form-control", placeholder: "10.99"
+                
+                .mb-4
+                  = f.label :description, class: "form-label"
+                  = f.text_area :description, class: "form-control", rows: 2, placeholder: "A delicious roll with fresh tuna and a hint of spice."
+                
+                .mb-5
+                  = f.label :category, class: "form-label"
+                  = f.text_field :category, class: "form-control", placeholder: "e.g., Sushi, Appetizer, Entrée"
+
+                %h6.mb-3 Availability & Dietary
+                .row.g-4
+                  .col-md-6
+                    .form-check.form-switch
+                      = f.check_box :available, class: "form-check-input", role: "switch"
+                      = f.label :available, "Make this item available?", class: "form-check-label"
+                  .col-md-6
+                    .form-check.form-switch
+                      = f.check_box :is_vegetarian, class: "form-check-input", role: "switch"
+                      = f.label :is_vegetarian, "Is this a vegetarian dish?", class: "form-check-label"
+
+                .d-grid.mt-5
+                  = f.submit "Save Menu Item", class: "btn btn-primary btn-lg"
+
+            .col-lg-6.d-flex.align-items-center.justify-content-center.p-4.bg-light.rounded-4
+              %div.text-center
+                %h5.fw-bold.mb-3 A Chef's Touch
+                %img.img-fluid.rounded-4{ src: '/images/chef_cooking.gif', alt: 'Chef cooking animation' }

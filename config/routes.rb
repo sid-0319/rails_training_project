@@ -15,6 +15,7 @@ Rails.application.routes.draw do
 
   resources :restaurants, only: %i[index new create] do
     resources :restaurant_tables, controller: 'restaurant_tables', only: %i[index new create edit update destroy]
+    resources :menu_items, path: 'menu'
   end
 
   resource :avatar, only: %i[edit update destroy]
