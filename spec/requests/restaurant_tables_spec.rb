@@ -63,5 +63,16 @@ RSpec.describe 'RestaurantTables', type: :request do
       follow_redirect!
       expect(response.body).to include('Access denied')
     end
+
+    it 'displays edit and delete buttons for each table' do
+      get restaurant_restaurant_tables_path(restaurant), params: { page: 1 }
+      doc = Nokogiri::HTML(response.body)
+      rows = doc.css('table tbody tr')
+
+      rows.each do |row|
+        expect(row.inner_html).to include('fa-pen-to-square') # FontAwesome edit icon
+        expect(row.inner_html).to include('fa-trash')         # FontAwesome delete icon
+      end
+    end
   end
 end
