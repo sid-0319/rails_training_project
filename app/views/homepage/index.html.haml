@@ -24,4 +24,10 @@
     .container.mt-5
       .row.justify-content-center
         .col-md-8.text-center
-          = link_to "Get Started", new_user_registration_path, class: "btn btn-warning btn-lg mt-3 shadow"
+          - if user_signed_in?
+            %h2.text-success.mb-4
+              Hello, #{current_user.first_name}
+            = button_to "Logout", destroy_user_session_path, method: :delete, class: "btn btn-danger mt-3", data: { turbo: false }
+          - else
+            %h2.mb-4 Welcome to Custom Rails App!
+            = link_to "Get Started", new_user_registration_path, class: "btn btn-warning btn-lg mt-3 shadow"

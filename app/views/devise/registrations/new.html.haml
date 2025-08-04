@@ -4,6 +4,15 @@
       .card.shadow-lg.p-4.border.border-primary.rounded-4
         .card-body
           %h2.text-center.mb-4 Sign Up
+
+          - if resource.errors.any?
+            #error_explanation
+              %h4.text-danger
+                = pluralize(resource.errors.count, "error") + " prohibited this user from being saved:"
+              %ul
+                - resource.errors.full_messages.each do |msg|
+                  %li= msg
+
           = form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f|
             .row
               .col-md-6
