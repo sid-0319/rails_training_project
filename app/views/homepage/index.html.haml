@@ -1,7 +1,27 @@
-.container.mt-5
-  .text-center
-    %h1 Welcome to Our App!
-    %p.lead This is your homepage.
-    %br/
-    = link_to 'Register', '#', class: 'btn btn-primary m-2'
-    = link_to 'Login', '#', class: 'btn btn-success m-2'
+!!! 5
+%html
+  %head
+    %title Custom Rails App
+    = csrf_meta_tags
+    = csp_meta_tag
+    = stylesheet_link_tag "application", media: "all"
+    = javascript_include_tag "application", defer: true
+
+  %body.bg-light
+    %nav.navbar.navbar-expand-lg.navbar-dark.bg-dark.shadow-sm
+      .container
+        = link_to root_path, class: "navbar-brand fw-bold text-warning" do
+          %img{ src: "https://download.logo.wine/logo/Ruby_on_Rails/Ruby_on_Rails-Logo.wine.png", alt: "Rails Logo", height: "40", class: "me-2" }
+        %button.navbar-toggler{ "data-bs-toggle" => "collapse", "data-bs-target" => "#navbarNav" }
+          %span.navbar-toggler-icon
+        #navbarNav.collapse.navbar-collapse
+          %ul.navbar-nav.ms-auto
+            %li.nav-item
+              = link_to "Sign Up", new_user_registration_path, class: "nav-link text-white"
+            %li.nav-item
+              = link_to "Sign In", new_user_session_path, class: "nav-link text-white"
+
+    .container.mt-5
+      .row.justify-content-center
+        .col-md-8.text-center
+          = link_to "Get Started", new_user_registration_path, class: "btn btn-warning btn-lg mt-3 shadow"

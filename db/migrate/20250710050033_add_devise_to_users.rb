@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# It helps in adding devise gem for the Users.
 class AddDeviseToUsers < ActiveRecord::Migration[8.0]
   def self.up
     change_table :users do |t|

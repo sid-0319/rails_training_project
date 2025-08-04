@@ -1,0 +1,33 @@
+.container.mt-5
+  .row.justify-content-center
+    .col-md-6
+      .card.shadow-lg.p-4.border.border-success.rounded-4
+        .card-body
+          %h2.text-center.mb-4 Sign In
+
+          = form_for(resource, as: resource_name, url: session_path(resource_name)) do |f|
+            - if resource.errors.any?
+              #error_explanation
+                %h4.text-danger
+                  = pluralize(resource.errors.count, "error") + " prohibited this user from being saved:"
+                %ul
+                  - resource.errors.full_messages.each do |msg|
+                    %li= msg
+
+            .mb-3
+              = f.label :email, class: "form-label"
+              = f.email_field :email, class: "form-control", autofocus: true, autocomplete: "email"
+
+            .mb-3
+              = f.label :password, class: "form-label"
+              = f.password_field :password, class: "form-control", autocomplete: "current-password"
+
+            .form-check.mb-3
+              = f.check_box :remember_me, class: "form-check-input"
+              = f.label :remember_me, class: "form-check-label"
+
+            .text-center
+              = f.submit "Log in", class: "btn btn-success mt-3 w-50"
+
+          .text-center.mt-3
+            = link_to "Don't have an account? Sign up", new_user_registration_path, class: "text-decoration-none"
