@@ -79,7 +79,7 @@ gem 'dotenv-rails'
 # INSTALL RUBOCOP
 gem 'rubocop', require: false
 
-# INSTAQLL DEVISE
+# INSTALL DEVISE
 gem 'devise'
 
 gem 'bootstrap', '~> 5.3'

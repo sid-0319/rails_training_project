@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 module Build
-  # This class helps in resetting and populating the database with user data for development/testing.
   class DatabaseBuilder
     def reset_data
       puts 'Cleaning database...'
