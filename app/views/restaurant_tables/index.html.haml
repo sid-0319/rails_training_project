@@ -141,81 +141,95 @@
     
 %div.container.tables-container
   %h2.page-header Tables for #{@restaurant.name}
-  .d-flex.justify-content-between.align-items-center.mb-4.flex-wrap.gap-3
-    = form_with url: restaurant_restaurant_tables_path(@restaurant), method: :get, local: true, class: "d-flex align-items-center gap-2" do |f|
-      %label{ for: "status", class: "form-label mb-0 fw-bold" } Filter by Status:
-      = f.select :status, options_for_select([["All", ""], ["Available", "available"], ["Reserved", "reserved"], ["Occupied", "occupied"]], @status_filter), {}, class: "form-select w-auto"
-      = f.submit "Filter", class: "btn btn-primary btn-sm"
-    
-    = button_tag "Add Table", type: :button, class: "btn btn-success btn-sm", data: { bs_toggle: "modal", bs_target: "#addTableModal" }
+  
+  - if current_user.staff?
+    .d-flex.justify-content-between.align-items-center.mb-4.flex-wrap.gap-3
+      = form_with url: restaurant_restaurant_tables_path(@restaurant), method: :get, local: true, class: "d-flex align-items-center gap-2" do |f|
+        %label{ for: "status", class: "form-label mb-0 fw-bold" } Filter by Status:
+        = f.select :status, options_for_select([["All", ""], ["Available", "available"], ["Reserved", "reserved"], ["Occupied", "occupied"]], @status_filter), {}, class: "form-select w-auto"
+        = f.submit "Filter", class: "btn btn-primary btn-sm"
+      
+      = button_tag "Add Table", type: :button, class: "btn btn-success btn-sm", data: { bs_toggle: "modal", bs_target: "#addTableModal" }
   
   - if @tables.any?
     .horizontal-scroll-wrapper
       - @tables.each do |table|
-        - status_class = "bg-#{table.status}"
-        %div.table-block
-          %span.table-status-tag{class: status_class}= table.status.humanize
-          %h3.table-number= table.table_number
-          %p.table-details
-            %i.fas.fa-chair
-            = table.seats
-            Seats
-          .table-actions
-            = button_tag type: "button", class: "btn btn-sm btn-warning", data: { bs_toggle: "modal", bs_target: "#editTableModal-#{table.id}" } do
-              %i.fas.fa-edit
-            = button_to restaurant_restaurant_table_path(@restaurant, table),
-              method: :delete,
-              data: { confirm: "Are you sure you want to delete this table?" },
-              class: "btn btn-sm btn-danger" do
-              %i.fas.fa-trash
+        -# This is the new conditional statement. It checks if the user is a staff member OR if the table is available.
+        - if current_user.staff? || table.status == "available"
+          - status_class = "bg-#{table.status}"
+          %div.table-block
+            %span.table-status-tag{class: status_class}= table.status.humanize
+            %h3.table-number= table.table_number
+            %p.table-details
+              %i.fas.fa-chair
+              = table.seats
+              Seats
+            .table-actions
+              - if current_user.staff?
+                = button_tag type: "button", class: "btn btn-sm btn-warning", data: { bs_toggle: "modal", bs_target: "#editTableModal-#{table.id}" } do
+                  %i.fas.fa-edit
+                = button_to restaurant_restaurant_table_path(@restaurant, table),
+                  method: :delete,
+                  data: { confirm: "Are you sure you want to delete this table?" },
+                  class: "btn btn-sm btn-danger" do
+                  %i.fas.fa-trash
+                = link_to restaurant_restaurant_table_reservations_for_table_path(@restaurant, table),
+                  class: "btn btn-sm btn-info" do
+                  %i.fas.fa-calendar-check
+              - else
+                = link_to "Reserve Table", new_restaurant_reservation_path(@restaurant, restaurant_table_id: table.id), class: "btn btn-sm btn-primary"
   - else
     .alert.alert-info.text-center.mt-5
       %i.fas.fa-info-circle.me-2
-      No tables found for the selected filter.
+      - if current_user.staff?
+        No tables found for the selected filter.
+      - else
+        No available tables found at this time.
 
   .d-flex.justify-content-center.mt-4
     = will_paginate @tables, params: { sort: params[:sort], status: params[:status] }
 
-- if @tables.any?
-  - @tables.each do |table|
-    .modal.fade{id: "editTableModal-#{table.id}", tabindex: "-1", aria: { labelledby: "editTableModalLabel-#{table.id}", hidden: "true" } }
-      .modal-dialog
-        .modal-content
-          .modal-header
-            %h5.modal-title{id: "editTableModalLabel-#{table.id}"} Edit Table ##{table.table_number}
-            %button.btn-close{ type: "button", data: { bs_dismiss: "modal" }, aria: { label: "Close" } }
-          = form_with model: [@restaurant, table], url: restaurant_restaurant_table_path(@restaurant, table), method: :patch, local: true do |f|
-            .modal-body
-              .mb-3
-                = f.label :table_number, "Table Number", class: "form-label"
-                = f.text_field :table_number, class: "form-control", required: true
-              .mb-3
-                = f.label :seats, "Seats", class: "form-label"
-                = f.number_field :seats, class: "form-control", required: true
-              .mb-3
-                = f.label :status, "Status", class: "form-label"
-                = f.select :status, RestaurantTable.statuses.keys.map { |s| [s.humanize, s] }, {}, class: "form-select", required: true
-            .modal-footer
-              %button.btn.btn-secondary{ type: "button", data: { bs_dismiss: "modal" } } Close
-              = f.submit "Update Table", class: "btn btn-primary"
+- if current_user.staff?
+  - if @tables.any?
+    - @tables.each do |table|
+      .modal.fade{id: "editTableModal-#{table.id}", tabindex: "-1", aria: { labelledby: "editTableModalLabel-#{table.id}", hidden: "true" } }
+        .modal-dialog
+          .modal-content
+            .modal-header
+              %h5.modal-title{id: "editTableModalLabel-#{table.id}"} Edit Table ##{table.table_number}
+              %button.btn-close{ type: "button", data: { bs_dismiss: "modal" }, aria: { label: "Close" } }
+            = form_with model: [@restaurant, table], url: restaurant_restaurant_table_path(@restaurant, table), method: :patch, local: true do |f|
+              .modal-body
+                .mb-3
+                  = f.label :table_number, "Table Number", class: "form-label"
+                  = f.text_field :table_number, class: "form-control", required: true
+                .mb-3
+                  = f.label :seats, "Seats", class: "form-label"
+                  = f.number_field :seats, class: "form-control", required: true
+                .mb-3
+                  = f.label :status, "Status", class: "form-label"
+                  = f.select :status, RestaurantTable.statuses.keys.map { |s| [s.humanize, s] }, {}, class: "form-select", required: true
+              .modal-footer
+                %button.btn.btn-secondary{ type: "button", data: { bs_dismiss: "modal" } } Close
+                = f.submit "Update Table", class: "btn btn-primary"
 
-.modal.fade{ id: "addTableModal", tabindex: "-1", aria: { labelledby: "addTableModalLabel", hidden: "true" } }
-  .modal-dialog
-    .modal-content
-      .modal-header
-        %h5.modal-title#addTableModalLabel Add New Table
-        %button.btn-close{ type: "button", data: { bs_dismiss: "modal" }, aria: { label: "Close" } }
-      = form_with model: [@restaurant, @restaurant.restaurant_tables.new], url: restaurant_restaurant_tables_path(@restaurant), local: true do |f|
-        .modal-body
-          .mb-3
-            = f.label :table_number, "Table Number", class: "form-label"
-            = f.text_field :table_number, class: "form-control", required: true
-          .mb-3
-            = f.label :seats, "Seats", class: "form-label"
-            = f.number_field :seats, class: "form-control", required: true
-          .mb-3
-            = f.label :status, "Status", class: "form-label"
-            = f.select :status, RestaurantTable.statuses.keys.map { |s| [s.humanize, s] }, {}, class: "form-select", required: true
-        .modal-footer
-          %button.btn.btn-secondary{ type: "button", data: { bs_dismiss: "modal" } } Close
-          = f.submit "Create Table", class: "btn btn-primary"
+  .modal.fade{ id: "addTableModal", tabindex: "-1", aria: { labelledby: "addTableModalLabel", hidden: "true" } }
+    .modal-dialog
+      .modal-content
+        .modal-header
+          %h5.modal-title#addTableModalLabel Add New Table
+          %button.btn-close{ type: "button", data: { bs_dismiss: "modal" }, aria: { label: "Close" } }
+        = form_with model: [@restaurant, @restaurant.restaurant_tables.new], url: restaurant_restaurant_tables_path(@restaurant), local: true do |f|
+          .modal-body
+            .mb-3
+              = f.label :table_number, "Table Number", class: "form-label"
+              = f.text_field :table_number, class: "form-control", required: true
+            .mb-3
+              = f.label :seats, "Seats", class: "form-label"
+              = f.number_field :seats, class: "form-control", required: true
+            .mb-3
+              = f.label :status, "Status", class: "form-label"
+              = f.select :status, RestaurantTable.statuses.keys.map { |s| [s.humanize, s] }, {}, class: "form-select", required: true
+          .modal-footer
+            %button.btn.btn-secondary{ type: "button", data: { bs_dismiss: "modal" } } Close
+            = f.submit "Create Table", class: "btn btn-primary"

@@ -39,7 +39,6 @@
                 %strong Status:
                 = " #{restaurant.status.humanize}"
 
-            - if current_user&.staff?
               .d-flex.gap-2.mt-3
                 = link_to "View Tables", restaurant_restaurant_tables_path(restaurant), class: "btn btn-sm btn-primary fw-semibold shadow-sm"
                 = link_to "Menu", restaurant_menu_items_path(restaurant), class: "btn btn-sm btn-outline-success fw-semibold shadow-sm"

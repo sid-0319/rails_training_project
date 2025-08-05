@@ -1,6 +1,5 @@
 class MenuItemsController < ApplicationController
   before_action :authenticate_user!
-  before_action :authorize_staff_or_admin!
   before_action :set_restaurant
   before_action :set_menu_item, only: %i[edit update destroy]
 
