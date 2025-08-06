@@ -78,6 +78,10 @@
                         %li.nav-item
                           = link_to "Create Restaurant", new_restaurant_path, class: "nav-link"
 
+                - if current_user.staff?
+                  %li.nav-item.mb-2
+                    = link_to "View Feedbacks", feedbacks_path, class: "nav-link fw-bold"
+
                 %li.nav-item.mt-2
                   = button_to destroy_user_session_path, method: :delete, class: "nav-link text-danger fw-bold", data: { turbo: false } do
                     %i.fas.fa-sign-out-alt.me-2
@@ -129,6 +133,10 @@
                       = link_to "Restaurants", restaurants_path, class: "nav-link"
                     %li.nav-item
                       = link_to "Create Restaurant", new_restaurant_path, class: "nav-link"
+
+            - if current_user.staff?
+              %li.nav-item.mb-2
+                = link_to "View Feedbacks", feedbacks_path, class: "nav-link fw-bold"
 
             %li.nav-item.mt-2
               = button_to destroy_user_session_path, method: :delete, class: "nav-link text-danger fw-bold", data: { turbo: false } do

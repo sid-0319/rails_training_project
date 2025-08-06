@@ -9,6 +9,8 @@ Rails.application.routes.draw do
 
   devise_for :users
 
+  resources :feedbacks, only: %i[create index]
+
   devise_scope :user do
     delete '/logout', to: 'devise/sessions#destroy', as: :logout
   end
@@ -23,6 +25,7 @@ Rails.application.routes.draw do
     end
 
     resources :menu_items, path: 'menu'
+    resources :feedbacks, only: %i[create index]
 
     resources :reservations, only: %i[new create index] do
       member do
