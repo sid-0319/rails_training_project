@@ -1,11 +1,18 @@
 require 'rails_helper'
 
 RSpec.describe 'RestaurantTables', type: :request do
-  let!(:staff) { create(:user, role_type: :staff) }
+  let!(:staff) { create(:user, :staff) }
   let!(:restaurant) { create(:restaurant, user: staff) }
 
   before do
-    sign_in staff
+    # Set Devise mapping manually if you use a custom scope in devise_for
+    post user_session_path, params: {
+      user: {
+        email: staff.email,
+        password: staff.password
+      }
+    }
+    follow_redirect! # if redirect after login
   end
 
   describe 'GET /restaurants/:restaurant_id/restaurant_tables' do
@@ -48,14 +55,12 @@ RSpec.describe 'RestaurantTables', type: :request do
     it 'defaults to descending order if invalid params' do
       get restaurant_restaurant_tables_path(restaurant), params: { sort: 'invalid', direction: 'bad' }
       doc = Nokogiri::HTML(response.body)
-      created_at_column_index = 3
-      rows = doc.css('table tbody tr')
-      expect(rows.count).to be > 0
+      expect(doc.css('table tbody tr').count).to be > 0
     end
 
     it 'returns only staff access' do
       sign_out staff
-      customer = create(:user, role_type: :customer)
+      customer = create(:user, :customer)
       sign_in customer
 
       get restaurant_restaurant_tables_path(restaurant)
@@ -70,8 +75,8 @@ RSpec.describe 'RestaurantTables', type: :request do
       rows = doc.css('table tbody tr')
 
       rows.each do |row|
-        expect(row.inner_html).to include('fa-pen-to-square') # FontAwesome edit icon
-        expect(row.inner_html).to include('fa-trash')         # FontAwesome delete icon
+        expect(row.inner_html).to include('fa-pen-to-square') # edit icon
+        expect(row.inner_html).to include('fa-trash')         # delete icon
       end
     end
   end
