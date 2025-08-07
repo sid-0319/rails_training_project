@@ -6,27 +6,35 @@
           .row
             .col-lg-6
               %h3.card-title.text-center.fw-bold.mb-2 Menu Item
+
+              - if @menu_item.errors.any?
+                .alert.alert-danger
+                  %h5.alert-heading There were some errors with your submission:
+                  %ul.mb-0
+                    - @menu_item.errors.full_messages.each do |message|
+                      %li= message
+
               = form_with model: [@restaurant, @menu_item], local: true do |f|
                 .row.g-4
                   .col-md-6
                     .mb-3
                       = f.label :item_name, class: "form-label"
-                      = f.text_field :item_name, class: "form-control form-control-md", placeholder: "e.g., Spicy Tuna Roll"
-                  
+                      = f.text_field :item_name, class: "form-control form-control-md", placeholder: "e.g., Spicy Tuna Roll", required: true
+
                   .col-md-6
                     .mb-3
                       = f.label :price, class: "form-label"
                       .input-group.input-group-md
                         %span.input-group-text Rs.
-                        = f.number_field :price, step: 0.01, class: "form-control", placeholder: "10.99"
-                
+                        = f.number_field :price, step: 0.01, class: "form-control", placeholder: "10.99", required: true
+
                 .mb-4
                   = f.label :description, class: "form-label"
-                  = f.text_area :description, class: "form-control", rows: 2, placeholder: "A delicious roll with fresh tuna and a hint of spice."
-                
+                  = f.text_area :description, class: "form-control", rows: 2, placeholder: "A delicious roll with fresh tuna and a hint of spice.", required: true
+
                 .mb-5
                   = f.label :category, class: "form-label"
-                  = f.text_field :category, class: "form-control", placeholder: "e.g., Sushi, Appetizer, Entrée"
+                  = f.text_field :category, class: "form-control", placeholder: "e.g., Sushi, Appetizer, Entrée", required: true
 
                 %h6.mb-3 Availability & Dietary
                 .row.g-4

@@ -12,7 +12,7 @@ class ReservationsController < ApplicationController
   def create
     @reservation = @restaurant.reservations.new(reservation_params)
     if @reservation.save
-      redirect_to root_path, notice: 'Reservation successful! Confirmation email sent.'
+      redirect_to root_path, notice: 'Reservation is under progress!.'
     else
       render :new
     end
