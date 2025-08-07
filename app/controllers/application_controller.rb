@@ -28,6 +28,12 @@ class ApplicationController < ActionController::Base
     redirect_to root_path, alert: 'Access denied.'
   end
 
+  def require_staff!
+    return if current_user&.staff?
+
+    redirect_to root_path, alert: 'Access denied.'
+  end
+
   def after_sign_in_path_for(resource)
     role = session[:login_role]
 

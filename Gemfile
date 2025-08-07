@@ -100,4 +100,12 @@ gem 'image_processing', '~> 1.2'
 
 gem 'aasm'
 
+gem 'simple_form'
 gem 'will_paginate', '~> 3.3'
+
+gem 'pry'
+
+group :development do
+  gem 'letter_opener'
+  gem 'letter_opener_web'
+end

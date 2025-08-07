@@ -1,0 +1,35 @@
+%h2.text-center.my-4.text-primary.fw-bold.animate__animated.animate__fadeInDown Reservations for #{@restaurant.name}
+
+.table-responsive
+  %table.table.table-striped.table-hover.align-middle.shadow-sm
+    %thead.table-light
+      %tr
+        %th Date
+        %th Time
+        %th Guests
+        %th Customer Name
+        %th Contact
+        %th Status
+        %th.text-center Actions
+    %tbody
+      - @reservations.each do |res|
+        %tr
+          %td= res.reservation_date.strftime("%b %d, %Y")
+          %td= res.reservation_time.strftime("%I:%M %p")
+          %td= res.number_of_guests
+          %td= res.customer_name
+          %td= res.customer_contact
+          %td
+            - if res.pending?
+              %span.badge.bg-warning.text-dark Pending
+            - elsif res.accepted? 
+              %span.badge.bg-success Accepted
+            - else
+              %span.badge.bg-danger Rejected
+          %td.text-center
+            - if res.pending?
+              .d-flex.justify-content-center
+                = button_to "Accept", accept_restaurant_reservation_path(@restaurant, res), method: :patch, class: "btn btn-sm btn-success me-2", data: { turbo_confirm: 'Are you sure you want to accept this reservation?' }
+                = button_to "Reject", reject_restaurant_reservation_path(@restaurant, res), method: :patch, class: "btn btn-sm btn-danger", data: { turbo_confirm: 'Are you sure you want to reject this reservation?' }
+            - else
+              %span.badge.bg-secondary No Action

@@ -66,11 +66,11 @@
                           = link_to "Current Orders", "#", class: "nav-link"
                         %li.nav-item
                           = link_to "Past Orders", "#", class: "nav-link"
-                - else
-                  %li.nav-item.mb-2
-                    %a.nav-link.fw-bold{"data-bs-toggle" => "collapse", href: "#booksMenu", role: "button"}
-                      %i.fas.fa-utensils.me-2
-                      Restaurants
+          
+                %li.nav-item.mb-2
+                  %a.nav-link.fw-bold{"data-bs-toggle" => "collapse", href: "#booksMenu", role: "button"}
+                    %i.fas.fa-utensils.me-2
+                    Restaurants
                     #booksMenu.collapse.ms-3
                       %ul.nav.flex-column
                         %li.nav-item

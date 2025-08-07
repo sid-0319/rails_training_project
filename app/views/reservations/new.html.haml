@@ -1,0 +1,13 @@
+.container
+  .row.justify-content-center
+    .col-md-8.col-lg-6.mt-5
+      %h2.text-center.mb-4 Make a Reservation for #{@restaurant.name}
+      = simple_form_for [@restaurant, @reservation] do |f|
+        = f.hidden_field :restaurant_table_id
+        = f.input :reservation_date, as: :date
+        = f.input :reservation_time, as: :time
+        = f.input :number_of_guests
+        = f.input :customer_name
+        = f.input :customer_contact
+        = f.input :customer_email, label: "Email"
+        = f.button :submit, "Book Now", class: "btn btn-primary btn-md d-grid gap-2"
