@@ -20,8 +20,7 @@ class FeedbacksController < ApplicationController
       redirect_to request.referer || root_path, notice: 'Feedback submitted successfully.'
     else
       @feedbacks = Feedback.includes(:user, :restaurant).all
-      flash.now[:alert] = 'Failed to submit feedback.'
-      render :index
+      redirect_to root_path, alert: 'Feedback submission failed. Please try again.'
     end
   end
 

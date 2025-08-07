@@ -4,7 +4,7 @@
       %h2.text-center.mb-4 Make a Reservation for #{@restaurant.name}
       = simple_form_for [@restaurant, @reservation] do |f|
         = f.hidden_field :restaurant_table_id
-        = f.input :reservation_date, as: :date
+        = f.input :reservation_date, as: :date, input_html: { min: Date.current.to_s }
         = f.input :reservation_time, as: :time
         = f.input :number_of_guests
         = f.input :customer_name
