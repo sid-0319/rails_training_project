@@ -55,7 +55,7 @@
       .menu-item {
         display: flex;
         justify-content: space-between;
-        align-items: center; /* Aligns items vertically in the middle */
+        align-items: center;
         margin-bottom: 1rem;
         border-bottom: 1px dashed #e0e0e0;
         padding-bottom: 0.5rem;
@@ -84,27 +84,29 @@
         margin-top: 3rem;
       }
 
-      /* Simple icon for dietary and availability */
       .dish-icon-veg {
         color: #28a745;
       }
+
       .dish-icon-non-veg {
         color: #dc3545;
       }
+
       .dish-icon-unavailable {
         color: #888;
       }
 
-      /* Action buttons for editing */
       .action-buttons {
         display: flex;
         align-items: center;
         gap: 0.5rem;
         white-space: nowrap;
       }
+
       .action-buttons a, .action-buttons button {
         font-size: 0.9rem;
       }
+
 %div.container-fluid.menu-container
   %div.row.justify-content-center
     %div.col-lg-8.col-md-10
@@ -113,8 +115,9 @@
           %div
             %h1.main-title= @restaurant.name
             %h2.sub-title DINNER MENU
-          %div
-            = link_to '➕ Add New Item', new_restaurant_menu_item_path(@restaurant), class: "btn btn-outline-dark"
+          - if current_user.staff?
+            %div
+              = link_to '➕ Add New Item', new_restaurant_menu_item_path(@restaurant), class: "btn btn-outline-dark"
 
         - if @menu_items.any?
           - @menu_items.group_by(&:category).each do |category, items|
@@ -133,13 +136,14 @@
                   %p.text-muted.mt-1= item.description
                 %div.d-flex.align-items-center
                   %span.item-price= "₹#{item.price}"
-                  %div.action-buttons.ms-3
-                    = link_to '✏️', edit_restaurant_menu_item_path(@restaurant, item), class: "btn btn-sm btn-outline-secondary"
-                    %form{ action: restaurant_menu_item_path(@restaurant, item), method: "post", onsubmit: "return confirm('Are you sure?');", class: "d-inline" }
-                      = hidden_field_tag :_method, "delete"
-                      = hidden_field_tag :authenticity_token, form_authenticity_token
-                      %button.btn.btn-sm.btn-outline-danger{ type: "submit" }
-                        🗑️
+                  - if current_user.staff?
+                    %div.action-buttons.ms-3
+                      = link_to '✏️', edit_restaurant_menu_item_path(@restaurant, item), class: "btn btn-sm btn-outline-secondary"
+                      %form{ action: restaurant_menu_item_path(@restaurant, item), method: "post", onsubmit: "return confirm('Are you sure?');", class: "d-inline" }
+                        = hidden_field_tag :_method, "delete"
+                        = hidden_field_tag :authenticity_token, form_authenticity_token
+                        %button.btn.btn-sm.btn-outline-danger{ type: "submit" }
+                          🗑️
         - else
           %div.alert.alert-info.text-center.mt-5
             %i.fas.fa-info-circle.me-2

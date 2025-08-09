@@ -5,6 +5,10 @@ class ReservationsController < ApplicationController
 
   before_action :require_staff!, only: %i[table_index accept reject]
 
+  def my_reservations
+    @reservations = current_user.reservations.includes(:restaurant)
+  end
+
   def new
     @reservation = @restaurant.reservations.new(restaurant_table_id: params[:restaurant_table_id])
   end
@@ -12,7 +16,7 @@ class ReservationsController < ApplicationController
   def create
     @reservation = @restaurant.reservations.new(reservation_params)
     if @reservation.save
-      redirect_to root_path, notice: 'Reservation successful! Confirmation email sent.'
+      redirect_to root_path, notice: 'Reservation is under progress!.'
     else
       render :new
     end

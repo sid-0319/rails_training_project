@@ -22,3 +22,12 @@
             %button.btn-close{ "data-bs-dismiss" => "alert", "aria-label" => "Close" }
 
     = yield
+
+    - if user_signed_in? && current_user.customer?
+      = render 'feedbacks/modal'
+
+      %button#openFeedbackBtn.btn.btn-primary.btn-lg.rounded-circle{
+        style: "position: fixed; bottom: 30px; right: 30px; z-index: 1055;",
+        data: { bs_toggle: "modal", bs_target: "#feedbackModal" }
+      }
+        %i.fas.fa-comment-dots

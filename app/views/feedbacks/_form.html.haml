@@ -1,0 +1,19 @@
+= simple_form_for @feedback, url: feedbacks_path do |f|
+  - restaurant = local_assigns[:restaurant] || @restaurant
+
+  = f.hidden_field :restaurant_id, value: restaurant&.id
+
+  %p
+    Restaurant:
+    = restaurant&.name || 'NA'
+
+  = f.hidden_field :current_url, value: request.original_url
+
+  .mb-3
+    = f.input :rating
+  .mb-3
+    = f.input :comment
+  .mb-3
+    = f.input :customer_name
+
+  = f.submit 'Submit Feedback', class: "btn btn-primary"

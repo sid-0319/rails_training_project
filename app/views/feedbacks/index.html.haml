@@ -1,0 +1,25 @@
+.container.mt-4
+  %h3.text-center.mb-4.text-primary Feedback Summary
+
+  %table.table.table-hover.table-bordered.shadow-sm{ style: "background-color: #fdfdfd;" }
+    %thead.table-light
+      %tr
+        %th User
+        %th Rating
+        %th Comment
+        %th Restaurant
+        %th Date
+    %tbody
+      - @feedbacks.each do |feedback|
+        %tr
+          %td= feedback.user&.first_name || "N/A"
+          %td
+            - rating = feedback.rating.to_i
+            - 1.upto(5) do |i|
+              - if i <= rating
+                %i.fa.fa-star.text-warning
+              - else
+                %i.fa.fa-star.text-secondary
+          %td= truncate(feedback.comment, length: 50)
+          %td= feedback.restaurant&.name || "N/A"
+          %td= feedback.created_at.strftime("%b %d, %Y %H:%M")
