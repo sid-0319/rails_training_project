@@ -32,6 +32,7 @@ Rails.application.routes.draw do
         patch :accept
         patch :reject
       end
+      resources :orders, only: %i[new create]
     end
   end
 

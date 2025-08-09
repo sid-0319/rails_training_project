@@ -21,10 +21,16 @@ class RestaurantTablesController < ApplicationController
 
   def create
     @table = @restaurant.restaurant_tables.new(table_params)
-    if @table.save
-      redirect_to restaurant_restaurant_tables_path(@restaurant), notice: 'Table created successfully.'
-    else
-      render :new
+
+    respond_to do |format|
+      if @table.save
+        format.html { redirect_to restaurant_restaurant_tables_path(@restaurant), notice: 'Created!' }
+        format.js
+      else
+        @tables = @restaurant.restaurant_tables.paginate(page: params[:page])
+        format.html { render :index }
+        format.js
+      end
     end
   end
 
@@ -34,7 +40,8 @@ class RestaurantTablesController < ApplicationController
     if @table.update(table_params)
       redirect_to restaurant_restaurant_tables_path(@restaurant), notice: 'Table updated successfully.'
     else
-      render :edit
+      flash[:alert] = @table.errors.full_messages.to_sentence
+      redirect_to restaurant_restaurant_tables_path(@restaurant, open_modal: "editTableModal-#{@table.id}")
     end
   end
 

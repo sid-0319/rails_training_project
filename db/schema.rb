@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_06_114942) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_07_111613) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -74,6 +74,24 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_06_114942) do
     t.datetime "updated_at", null: false
     t.boolean "is_vegetarian"
     t.index ["restaurant_id"], name: "index_menu_items_on_restaurant_id"
+  end
+
+  create_table "orders", force: :cascade do |t|
+    t.string "order_number", null: false
+    t.jsonb "items", default: [], null: false
+    t.decimal "total_price", precision: 10, scale: 2, null: false
+    t.integer "status", default: 0, null: false
+    t.string "customer_name", null: false
+    t.bigint "user_id", null: false
+    t.bigint "restaurant_id", null: false
+    t.bigint "restaurant_table_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "reservation_id", null: false
+    t.index ["reservation_id"], name: "index_orders_on_reservation_id"
+    t.index ["restaurant_id"], name: "index_orders_on_restaurant_id"
+    t.index ["restaurant_table_id"], name: "index_orders_on_restaurant_table_id"
+    t.index ["user_id"], name: "index_orders_on_user_id"
   end
 
   create_table "reservations", force: :cascade do |t|
@@ -149,6 +167,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_06_114942) do
   add_foreign_key "feedbacks", "restaurants"
   add_foreign_key "feedbacks", "users"
   add_foreign_key "menu_items", "restaurants"
+  add_foreign_key "orders", "reservations"
+  add_foreign_key "orders", "restaurant_tables"
+  add_foreign_key "orders", "restaurants"
+  add_foreign_key "orders", "users"
   add_foreign_key "reservations", "restaurant_tables"
   add_foreign_key "reservations", "restaurants"
   add_foreign_key "restaurant_tables", "restaurants"

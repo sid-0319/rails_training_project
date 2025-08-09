@@ -1,0 +1,139 @@
+%h2.text-center.mb-4 Menu for #{@restaurant.name}
+
+%div.container
+  - if current_user.staff? || current_user.admin?
+    = link_to 'Add New Menu Item', new_restaurant_menu_item_path(@restaurant), class: 'btn btn-primary mb-4'
+
+  %table.table.table-striped
+    %thead
+      %tr
+        %th Item Name
+        %th Description
+        %th Price
+        %th Category
+        %th Available
+        %th Actions
+    %tbody
+      - @menu_items.each do |item|
+        %tr{ id: "menu_item_#{item.id}" }
+          %td= item.item_name
+          %td= item.description
+          %td ₹#{item.price}
+          %td= item.category
+          %td= item.available ? 'Yes' : 'No'
+          %td
+            - if current_user.staff? || current_user.admin?
+              = link_to 'Edit', edit_restaurant_menu_item_path(@restaurant, item), class: 'btn btn-sm btn-warning me-2'
+              = link_to 'Delete', restaurant_menu_item_path(@restaurant, item), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-sm btn-danger'
+            - elsif current_user.customer?
+              .d-flex.align-items-center
+                %button.btn.btn-sm.btn-outline-secondary.minus-btn{ data: { id: item.id } }
+                  %i.fas.fa-minus
+                %span.mx-2{ id: "quantity_#{item.id}" } 0
+                %button.btn.btn-sm.btn-outline-secondary.plus-btn{ data: { id: item.id, price: item.price, name: item.item_name } }
+                  %i.fas.fa-plus
+
+  - if current_user.customer?
+    .text-end.mt-3
+      %button.btn.btn-success#place_order_btn Place Order
+
+  / Order Summary Modal
+  .modal.fade#orderSummaryModal{ tabindex: "-1", role: "dialog" }
+    .modal-dialog.modal-lg{ role: "document" }
+      .modal-content
+        .modal-header
+          %h5.modal-title Order Summary
+          %button.close{ data: { bs_dismiss: "modal" }, aria: { label: "Close" } }
+            %span{ aria: { hidden: "true" } } ×
+        .modal-body
+          %table.table
+            %thead
+              %tr
+                %th Item
+                %th Quantity
+                %th Price
+                %th Subtotal
+            %tbody#order_summary_body
+          %div.text-end
+            %strong Total: ₹
+            %span#order_total 0
+        .modal-footer
+          = button_to 'Confirm Order', restaurant_reservation_orders_path(@restaurant, @reservation), method: :post, class: 'btn btn-primary', id: 'confirm_order_btn'
+          %button.btn.btn-secondary{ data: { bs_dismiss: "modal" } } Cancel
+
+:javascript
+  let cart = {}
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const plusButtons = document.querySelectorAll(".plus-btn")
+    const minusButtons = document.querySelectorAll(".minus-btn")
+    const placeOrderBtn = document.getElementById("place_order_btn")
+
+    plusButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        const id = btn.dataset.id
+        const name = btn.dataset.name
+        const price = parseFloat(btn.dataset.price)
+        if (!cart[id]) cart[id] = { quantity: 0, price: price, name: name }
+        cart[id].quantity += 1
+        document.getElementById(`quantity_${id}`).innerText = cart[id].quantity
+      })
+    })
+
+    minusButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        const id = btn.dataset.id
+        if (cart[id] && cart[id].quantity > 0) {
+          cart[id].quantity -= 1
+          document.getElementById(`quantity_${id}`).innerText = cart[id].quantity
+        }
+      })
+    })
+
+    placeOrderBtn.addEventListener("click", () => {
+      const tbody = document.getElementById("order_summary_body")
+      tbody.innerHTML = ''
+      let total = 0
+
+      for (const id in cart) {
+        const { quantity, price, name } = cart[id]
+        if (quantity > 0) {
+          const subtotal = price * quantity
+          total += subtotal
+
+          const row = `
+            <tr>
+              <td>${name}</td>
+              <td>${quantity}</td>
+              <td>₹${price}</td>
+              <td>₹${subtotal}</td>
+            </tr>
+          `
+          tbody.insertAdjacentHTML("beforeend", row)
+        }
+      }
+
+      document.getElementById("order_total").innerText = total
+      new bootstrap.Modal(document.getElementById("orderSummaryModal")).show()
+    })
+
+    document.getElementById("confirm_order_btn").addEventListener("click", (e) => {
+      e.preventDefault()
+      const form = e.target.closest("form")
+      const orderItems = []
+
+      for (const id in cart) {
+        const { quantity } = cart[id]
+        if (quantity > 0) {
+          orderItems.push({ menu_item_id: id, quantity: quantity })
+        }
+      }
+
+      const input = document.createElement("input")
+      input.type = "hidden"
+      input.name = "order[items]"
+      input.value = JSON.stringify(orderItems)
+      form.appendChild(input)
+      form.submit()
+    })
+  })

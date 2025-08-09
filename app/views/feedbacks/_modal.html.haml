@@ -4,7 +4,6 @@
       .modal-header
         %h5#feedbackModalLabel.modal-title Give Feedback
         %button.btn-close{ type: "button", data: { bs_dismiss: "modal" }, aria: { label: "Close" } }
-
       .modal-body
         = simple_form_for @feedback, url: feedbacks_path, html: { class: 'feedback-form' } do |f|
           = f.hidden_field :restaurant_id, value: @restaurant&.id
@@ -15,7 +14,7 @@
             .star-rating{ style: "display: flex; gap: 5px;" }
               - (1..5).each do |i|
                 %label{ style: "cursor: pointer;" }
-                  = f.radio_button :rating, i, id: "rating_#{i}", style: "display: none;" 
+                  = f.radio_button :rating, i, id: "rating_#{i}", style: "display: none;"
                   %i.fa.fa-star{ class: "text-secondary", data: { rating_value: i }, onclick: "document.getElementById('rating_#{i}').checked = true; updateStars(#{i})" }
 
           .mb-3
@@ -36,3 +35,10 @@
       }
     });
   }
+
+- if @feedback && @feedback.errors.any?
+  :javascript
+    document.addEventListener("DOMContentLoaded", function() {
+      var modal = new bootstrap.Modal(document.getElementById('feedbackModal'));
+      modal.show();
+    });

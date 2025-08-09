@@ -1,0 +1,6 @@
+<% if @table.errors.any? %>
+  $("#addTableModal .modal-body").html("<%= j render 'form', table: @table %>");
+<% else %>
+  $("#addTableModal").modal("hide");
+  $("#tablesList").html("<%= j render 'tables', tables: @restaurant.restaurant_tables %>");
+<% end %>
