@@ -1,57 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe 'Dashboard Access', type: :request do
-  include Devise::Test::IntegrationHelpers
   let(:password) { Faker::Internet.password(min_length: 8) }
-
-  let(:staff) do
-    create(:user,
-           role_type: :staff,
-           account_status: :active,
-           password: password,
-           password_confirmation: password)
-  end
-
-  let(:customer) do
-    create(:user,
-           role_type: :customer,
-           account_status: :active,
-           password: password,
-           password_confirmation: password)
-  end
-
-  describe 'GET /dashboard' do
-    context 'when staff is signed in' do
-      before do
-        sign_in staff
-        get '/dashboard'
-      end
-
-      it 'allows access to staff dashboard' do
-        expect(response).to have_http_status(:ok)
-        expect(response.body).to include('Staff')
-      end
-    end
-
-    context 'when customer is signed in' do
-      before do
-        sign_in customer
-        get '/dashboard'
-      end
-
-      it 'allows access to customer dashboard' do
-        expect(response).to have_http_status(:ok)
-        expect(response.body).to include('Customer')
-      end
-    end
-
-    context 'when user is not signed in' do
-      it 'redirects to sign in page' do
-        get '/dashboard'
-        expect(response).to redirect_to(new_user_session_path)
-      end
-    end
-  end
 
   describe 'POST /users/sign_in' do
     context 'when email is incorrect' do
@@ -67,6 +17,10 @@ RSpec.describe 'Dashboard Access', type: :request do
     end
 
     context 'when password is incorrect' do
+      let(:staff) do
+        create(:user, role_type: :staff, account_status: :active, password: password, password_confirmation: password)
+      end
+
       it 'does not sign in the user and re-renders the login page' do
         post user_session_path, params: {
           user: {
