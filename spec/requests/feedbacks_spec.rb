@@ -32,7 +32,7 @@ RSpec.describe 'Feedbacks', type: :request do
         expect(feedback.restaurant_id).to eq(restaurant.id)
         expect(feedback.comment).to eq('Great experience!')
 
-        expect(response).to redirect_to(restaurant_path(restaurant))
+        expect(response).to redirect_to(restaurants_path)
         follow_redirect!
         expect(response.body).to include('Feedback submitted')
       end

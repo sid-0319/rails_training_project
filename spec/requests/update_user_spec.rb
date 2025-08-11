@@ -43,7 +43,7 @@ RSpec.describe 'User Personal Information Update', type: :request do
           current_password: 'password123'
         }
       }
-      expect(response.body).to include("can't be blank")
+      expect(response.body).to include('can&#39;t be blank')
     end
 
     it 'with missing last name shows validation error' do
@@ -54,7 +54,7 @@ RSpec.describe 'User Personal Information Update', type: :request do
           current_password: 'password123'
         }
       }
-      expect(response.body).to include("can't be blank")
+      expect(response.body).to include('can&#39;t be blank')
     end
 
     it 'with missing current password shows validation error' do
@@ -65,7 +65,7 @@ RSpec.describe 'User Personal Information Update', type: :request do
           # missing current_password
         }
       }
-      expect(response.body).to include("can't be blank")
+      expect(response.body).to include('can&#39;t be blank')
     end
   end
 end
