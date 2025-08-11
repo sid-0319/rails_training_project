@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_07_111613) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_11_045132) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -106,8 +106,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_07_111613) do
     t.integer "status", default: 0
     t.bigint "restaurant_table_id", null: false
     t.string "customer_email"
+    t.bigint "user_id"
     t.index ["restaurant_id"], name: "index_reservations_on_restaurant_id"
     t.index ["restaurant_table_id"], name: "index_reservations_on_restaurant_table_id"
+    t.index ["user_id"], name: "index_reservations_on_user_id"
   end
 
   create_table "restaurant_tables", force: :cascade do |t|
@@ -173,6 +175,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_07_111613) do
   add_foreign_key "orders", "users"
   add_foreign_key "reservations", "restaurant_tables"
   add_foreign_key "reservations", "restaurants"
+  add_foreign_key "reservations", "users"
   add_foreign_key "restaurant_tables", "restaurants"
   add_foreign_key "restaurants", "users"
 end

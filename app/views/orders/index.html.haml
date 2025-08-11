@@ -1,0 +1,33 @@
+- if @restaurant.present?
+  %h2.text-center.my-4.text-primary.fw-bold
+    Orders for #{@restaurant.name}
+
+
+- else
+  %h2.text-center.my-4.text-primary.fw-bold
+    My Orders
+
+  = link_to "New Order", new_order_path, class: "btn btn-success mb-3"
+
+.table-responsive
+  %table.table.table-striped.table-hover
+    %thead
+      %tr
+        %th Order Number
+        %th Items
+        %th Total Price
+        %th Status
+        %th Actions
+    %tbody
+      - @orders.each do |order|
+        %tr
+          %td= order.order_number
+          %td
+            - order.items.each do |item|
+              %div
+                = "#{item['quantity']} x #{item['name']}"
+          %td= "₹#{order.total_price}"
+          %td= order.status.humanize
+          %td
+            = link_to "Edit", edit_restaurant_reservation_order_path(@restaurant, @reservation, order), class: "btn btn-sm btn-primary me-2"
+            = link_to "Delete", restaurant_reservation_order_path(@restaurant, @reservation, order), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-sm btn-danger"

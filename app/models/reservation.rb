@@ -3,6 +3,7 @@
 class Reservation < ApplicationRecord
   belongs_to :restaurant
   belongs_to :restaurant_table
+  belongs_to :user
   has_many :orders, dependent: :destroy
   enum :status, { pending: 0, accepted: 1, rejected: 2 }
 

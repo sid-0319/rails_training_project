@@ -1,8 +1,7 @@
 class ReservationsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_restaurant
+  before_action :set_restaurant, except: [:index]
   before_action :set_reservation, only: %i[update accept reject]
-
   before_action :require_staff!, only: %i[table_index accept reject]
 
   def my_reservations
@@ -15,6 +14,8 @@ class ReservationsController < ApplicationController
 
   def create
     @reservation = @restaurant.reservations.new(reservation_params)
+    @reservation.user = current_user # ✅ Link reservation to logged-in customer
+
     if @reservation.save
       redirect_to root_path, notice: 'Reservation is under progress!.'
     else
@@ -25,7 +26,6 @@ class ReservationsController < ApplicationController
   def table_index
     @table = @restaurant.restaurant_tables.find(params[:restaurant_table_id])
     @reservations = @table.reservations.order(reservation_date: :asc, reservation_time: :asc)
-
     render :index
   end
 
@@ -38,12 +38,17 @@ class ReservationsController < ApplicationController
   end
 
   def index
-    unless current_user&.staff?
-      redirect_to root_path, alert: 'Access denied'
-      return
+    if params[:restaurant_id] && current_user&.staff?
+      # Staff viewing reservations for a specific restaurant
+      @restaurant = Restaurant.find(params[:restaurant_id])
+      @reservations = @restaurant.reservations
+                                 .order(reservation_date: :asc, reservation_time: :asc)
+    else
+      # Customer viewing all their reservations
+      @reservations = current_user.reservations
+                                  .includes(:restaurant)
+                                  .order(reservation_date: :asc, reservation_time: :asc)
     end
-
-    @reservations = @restaurant.reservations.order(reservation_date: :asc, reservation_time: :asc)
   end
 
   # Staff action to confirm a reservation

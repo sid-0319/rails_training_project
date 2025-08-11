@@ -1,0 +1,17 @@
+= form_with model: [@restaurant, @order], local: true do |f|
+  = f.label :customer_name
+  = f.text_field :customer_name, class: "form-control", required: true
+
+  %h5.mt-3 Items
+  #items-container
+    - @order.items.each_with_index do |item, index|
+      .item-row.mb-2
+        = hidden_field_tag "order[items][][item_id]", item["item_id"]
+        = text_field_tag "order[items][][name]", item["name"], class: "form-control d-inline-block w-50", required: true
+        = number_field_tag "order[items][][quantity]", item["quantity"], min: 1, class: "form-control d-inline-block w-25 ms-2", required: true
+        = number_field_tag "order[items][][price]", item["price"], step: 0.01, min: 0, class: "form-control d-inline-block w-25 ms-2", required: true
+        = link_to "Remove", "#", class: "btn btn-danger btn-sm ms-2 remove-item"
+
+  = link_to "Add Item", "#", id: "add-item-btn", class: "btn btn-secondary mb-3"
+
+  = f.submit "Save Order", class: "btn btn-primary"

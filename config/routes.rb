@@ -3,6 +3,7 @@ Rails.application.routes.draw do
     require 'letter_opener_web'
     mount LetterOpenerWeb::Engine, at: '/letter_opener'
   end
+
   get 'dashboard/index'
   get '/homepage', to: 'homepage#index'
   root to: 'homepage#index'
@@ -31,10 +32,13 @@ Rails.application.routes.draw do
       member do
         patch :accept
         patch :reject
+        get :place_order, to: 'menu_items#index', as: :place_order # <-- NEW route
       end
-      resources :orders, only: %i[new create]
+      resources :orders, only: %i[index new create edit update destroy]
     end
   end
+
+  get '/reservations', to: 'reservations#index', as: 'customer_reservations'
 
   resource :avatar, only: %i[edit update destroy]
 
