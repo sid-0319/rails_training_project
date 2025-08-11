@@ -10,6 +10,8 @@ class User < ApplicationRecord
 
   has_one_attached :avatar
   has_many :restaurants, dependent: :destroy
+  has_many :reservations, dependent: :destroy
+  has_many :orders, dependent: :destroy
 
   enum :role_type, { admin: 1, staff: 2, customer: 3 }
   enum :account_status, { active: 1, inactive: 2 }

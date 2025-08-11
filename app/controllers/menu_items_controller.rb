@@ -5,6 +5,11 @@ class MenuItemsController < ApplicationController
 
   def index
     @menu_items = @restaurant.menu_items.order(:category, :item_name)
+    @reservation = current_user.reservations
+                               .where(restaurant: @restaurant)
+                               .where(status: %w[pending accepted])
+                               .order(reservation_date: :asc, reservation_time: :asc)
+                               .first
   end
 
   def new

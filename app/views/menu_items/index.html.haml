@@ -1,6 +1,8 @@
 %head
   %link{rel: "stylesheet", href: "https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css"}
   %link{rel: "stylesheet", href: "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"}
+  %script{src: "https://code.jquery.com/jquery-3.6.0.min.js"}
+  %script{src: "https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"}
   %style
     :css
       @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Playfair+Display:wght@700&display=swap');
@@ -96,15 +98,41 @@
         color: #888;
       }
 
-      .action-buttons {
+      .quantity-selector {
         display: flex;
         align-items: center;
         gap: 0.5rem;
-        white-space: nowrap;
+        margin-left: 1rem;
       }
 
-      .action-buttons a, .action-buttons button {
-        font-size: 0.9rem;
+      .quantity-selector button {
+        border: none;
+        background: #c93b33;
+        color: white;
+        padding: 0.3rem 0.6rem;
+        font-size: 1rem;
+        border-radius: 5px;
+      }
+
+      .total-section {
+        margin-top: 2rem;
+        font-size: 1.2rem;
+        font-weight: bold;
+        text-align: right;
+      }
+
+      .bill-header {
+        text-align: center;
+        margin-bottom: 1rem;
+      }
+
+      .bill-header h4 {
+        font-weight: bold;
+        margin-bottom: 0.2rem;
+      }
+
+      .bill-header small {
+        color: #555;
       }
 
 %div.container-fluid.menu-container
@@ -124,7 +152,7 @@
             %div.section-header
               = category
             - items.each do |item|
-              %div.menu-item
+              %div.menu-item{ data: { id: item.id, price: item.price, name: item.item_name } }
                 %div
                   %span.item-name= item.item_name
                   - if item.is_vegetarian
@@ -144,9 +172,124 @@
                         = hidden_field_tag :authenticity_token, form_authenticity_token
                         %button.btn.btn-sm.btn-outline-danger{ type: "submit" }
                           🗑️
+                  - else
+                    %div.quantity-selector
+                      %button.btn-decrease - 
+                      %span.quantity 0
+                      %button.btn-increase +
+
+          %div.total-section
+            Total: ₹<span id="total-price">0</span>
+
+          %div.text-end.mt-3
+            %button.btn.btn-success#confirm-order Confirm Order
+
         - else
           %div.alert.alert-info.text-center.mt-5
             %i.fas.fa-info-circle.me-2
             No menu items found. Why not add some?
 
         %div.menu-footer ENJOY YOUR MEAL !
+
+/ Modal for invoice (Bill style)
+.modal.fade#invoiceModal{ tabindex: "-1" }
+  .modal-dialog.modal-lg
+    .modal-content
+      .modal-header
+        %h5.modal-title Order Invoice
+        %button.btn-close{ type: "button", data: { bs_dismiss: "modal" } }
+      .modal-body
+        .bill-header
+          %h4= @restaurant.name
+          %small= Time.now.strftime("%d %B %Y, %I:%M %p")
+        %table.table.table-bordered
+          %thead.table-light
+            %tr
+              %th Item
+              %th.text-center Qty
+              %th.text-end Price
+              %th.text-end Subtotal
+          %tbody#invoice-list
+          %tfoot
+            %tr
+              %th{ colspan: "3", class: "text-end" } Total
+              %th.text-end#invoice-total 0
+      .modal-footer
+        = form_with url: restaurant_reservation_orders_path(@restaurant, @reservation), method: :post, local: true, id: 'order_form' do
+          = hidden_field_tag 'order[items]', '', id: 'order_items'
+          %button.btn.btn-secondary{ type: "button", data: { bs_dismiss: "modal" } } Close
+          %button.btn.btn-primary{ type: "submit" } Place Order
+
+:javascript
+  $(document).ready(function() {
+    function updateTotal() {
+      let total = 0;
+      $('.menu-item').each(function() {
+        let qty = parseInt($(this).find('.quantity').text());
+        let price = parseFloat($(this).data('price'));
+        total += qty * price;
+      });
+      $('#total-price').text(total.toFixed(2));
+    }
+
+    $('.btn-increase').click(function() {
+      let qtyElem = $(this).siblings('.quantity');
+      let qty = parseInt(qtyElem.text()) + 1;
+      qtyElem.text(qty);
+      updateTotal();
+    });
+
+    $('.btn-decrease').click(function() {
+      let qtyElem = $(this).siblings('.quantity');
+      let qty = parseInt(qtyElem.text());
+      if (qty > 0) {
+        qtyElem.text(qty - 1);
+        updateTotal();
+      }
+    });
+
+    $('#confirm-order').click(function() {
+      $('#invoice-list').empty();
+      let total = 0;
+      $('.menu-item').each(function() {
+        let qty = parseInt($(this).find('.quantity').text());
+        let name = $(this).data('name');
+        let price = parseFloat($(this).data('price'));
+        if (qty > 0) {
+          let subtotal = qty * price;
+          $('#invoice-list').append(`
+            <tr>
+              <td>${name}</td>
+              <td class="text-center">${qty}</td>
+              <td class="text-end">₹${price.toFixed(2)}</td>
+              <td class="text-end">₹${subtotal.toFixed(2)}</td>
+            </tr>
+          `);
+          total += subtotal;
+        }
+      });
+      $('#invoice-total').text(`₹${total.toFixed(2)}`);
+      $('#invoiceModal').modal('show');
+    });
+
+    $('#order_form').submit(function(e) {
+      let items = [];
+      $('.menu-item').each(function() {
+        let qty = parseInt($(this).find('.quantity').text());
+        if (qty > 0) {
+          items.push({
+            item_id: $(this).data('id'),
+            name: $(this).data('name'),
+            price: $(this).data('price'),
+            quantity: qty
+          });
+        }
+      });
+      if (items.length === 0) {
+        alert("Please select at least one item.");
+        e.preventDefault();
+        return false;
+      }
+      $('#order_items').val(JSON.stringify(items));
+    });
+  });
