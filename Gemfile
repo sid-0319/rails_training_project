@@ -91,3 +91,9 @@ gem 'apipie-rails'
 gem 'active_model_serializers'
 
 gem 'active_interaction'
+
+gem 'mini_magick'
+
+gem 'fastimage'
+
+gem 'image_processing', '~> 1.2'
