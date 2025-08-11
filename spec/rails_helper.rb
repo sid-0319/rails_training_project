@@ -38,6 +38,8 @@ rescue ActiveRecord::PendingMigrationError => e
 end
 RSpec.configure do |config|
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
+  config.include Warden::Test::Helpers
+  config.after(:each) { Warden.test_reset! }
   config.fixture_paths = [
     Rails.root.join('spec/fixtures')
   ]
