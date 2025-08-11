@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
-  apipie
+  get 'dashboard/index'
+  get '/homepage', to: 'homepage#index'
   root to: 'homepage#index'
 
   devise_for :users
@@ -8,13 +9,16 @@ Rails.application.routes.draw do
     delete '/logout', to: 'devise/sessions#destroy', as: :logout
   end
 
-  get '/homepage', to: 'homepage#index'
+  authenticated :user do
+    root to: 'dashboard#index', as: :authenticated_root
+  end
+
   resources :restaurants, only: %i[index new create]
+  resource :avatar, only: %i[edit update destroy]
 
   namespace :api do
     namespace :v1 do
       resources :users, only: %i[index create show update destroy]
     end
   end
-  resource :avatar, only: %i[edit update destroy]
 end
