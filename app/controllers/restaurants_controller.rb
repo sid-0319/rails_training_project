@@ -33,3 +33,8 @@ class RestaurantsController < ApplicationController
     params.require(:restaurant).permit(:name, :description, :location, :cuisine_type)
   end
 end
+
+def show
+  @restaurant = Restaurant.find(params[:id])
+  @feedback = Feedback.new
+end

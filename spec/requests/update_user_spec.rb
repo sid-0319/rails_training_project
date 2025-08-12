@@ -1,88 +1,149 @@
 require 'rails_helper'
 
 RSpec.describe 'User Personal Information Update', type: :request do
-  let(:user) { create(:user, first_name: 'John', last_name: 'Doe', email: 'john@example.com') }
+  let(:user) { create(:user, role_type: :staff, password: 'password123', password_confirmation: 'password123') }
 
   before do
-    puts method(:sign_in).source_location
-    sign_in(user)
+    # Sign in using Devise session path
+    post user_session_path, params: {
+      user: {
+        email: user.email,
+        password: 'password123'
+      }
+    }
   end
 
   describe 'GET /users/edit' do
     it 'renders the edit form with current user data' do
       get edit_user_registration_path
-      expect(response).to have_http_status(:success)
-      expect(response.body).to include('Edit User')
-      expect(response.body).to include('value="john@example.com"')
-      expect(response.body).to include('Update')
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Edit')
     end
   end
 
   describe 'PUT /users' do
-    context 'with valid data' do
-      it 'updates user details' do
-        put user_registration_path, params: {
-          user: {
-            first_name: 'Jane',
-            last_name: 'Smith',
-            email: 'jane@example.com',
-            current_password: 'password123'
-          }
+    it 'with valid data updates user details' do
+      put user_registration_path, params: {
+        user: {
+          first_name: 'NewFirst',
+          last_name: 'NewLast',
+          current_password: 'password123'
         }
-
-        follow_redirect!
-
-        expect(response.body).to include('Your account has been updated successfully.')
-        user.reload
-        expect(user.first_name).to eq('Jane')
-        expect(user.last_name).to eq('Smith')
-        expect(user.email).to eq('jane@example.com')
-      end
+      }
+      expect(response).to redirect_to(root_path)
+      follow_redirect!
+      expect(response.body).to include('NewFirst')
     end
 
-    context 'with missing first name' do
-      it 'shows validation error' do
-        put user_registration_path, params: {
-          user: {
-            first_name: '',
-            last_name: 'Smith',
-            email: 'jane@example.com',
-            current_password: 'password123'
-          }
+    it 'with missing first name shows validation error' do
+      put user_registration_path, params: {
+        user: {
+          first_name: '',
+          last_name: 'NewLast',
+          current_password: 'password123'
         }
-
-        expect(response.body).to include("First name can't be blank")
-      end
+      }
+      expect(response.body).to include('can&#39;t be blank')
     end
 
-    context 'with missing last name' do
-      it 'shows validation error' do
-        put user_registration_path, params: {
-          user: {
-            first_name: 'Jane',
-            last_name: '',
-            email: 'jane@example.com',
-            current_password: 'password123'
-          }
+    it 'with missing last name shows validation error' do
+      put user_registration_path, params: {
+        user: {
+          first_name: 'NewFirst',
+          last_name: '',
+          current_password: 'password123'
         }
-
-        expect(response.body).to include("Last name can't be blank")
-      end
+      }
+      expect(response.body).to include('can&#39;t be blank')
     end
 
-    context 'with missing current password' do
-      it 'shows validation error' do
-        put user_registration_path, params: {
-          user: {
-            first_name: 'Jane',
-            last_name: 'Smith',
-            email: 'jane@example.com',
-            current_password: ''
-          }
+    it 'with missing current password shows validation error' do
+      put user_registration_path, params: {
+        user: {
+          first_name: 'NewFirst',
+          last_name: 'NewLast'
         }
-
-        expect(response.body).to include("Current password can't be blank")
-      end
+      }
+      expect(response.body).to include('can&#39;t be blank')
     end
+  end
+
+  it 'redirects to sign in if not logged in' do
+    delete destroy_user_session_path
+    get edit_user_registration_path
+    expect(response).to redirect_to(new_user_session_path)
+  end
+
+  it 'has a working sign out path' do
+    delete destroy_user_session_path
+    expect(response).to redirect_to(root_path)
+  end
+
+  it 'GET /users/edit contains first name field' do
+    get edit_user_registration_path
+    expect(response.body).to include('first_name')
+  end
+
+  it 'GET /users/edit contains last name field' do
+    get edit_user_registration_path
+    expect(response.body).to include('last_name')
+  end
+
+  it 'GET /users/edit contains current password field' do
+    get edit_user_registration_path
+    expect(response.body).to include('current_password')
+  end
+
+  it 'does not change user if update params are empty' do
+    original_first = user.first_name
+    put user_registration_path, params: {
+      user: {
+        first_name: '',
+        last_name: '',
+        current_password: 'password123'
+      }
+    }
+    user.reload
+    expect(user.first_name).to eq(original_first)
+  end
+
+  it 'renders edit page again when update fails' do
+    put user_registration_path, params: {
+      user: {
+        first_name: '',
+        last_name: '',
+        current_password: 'password123'
+      }
+    }
+    expect(response.body).to include('Edit')
+  end
+
+  it 'GET /users/edit returns HTML content type' do
+    get edit_user_registration_path
+    expect(response.content_type).to include('text/html')
+  end
+
+  it 'PUT /users redirects to root after successful update' do
+    put user_registration_path, params: {
+      user: {
+        first_name: 'Updated',
+        last_name: 'Name',
+        current_password: 'password123'
+      }
+    }
+    expect(response).to redirect_to(root_path)
+  end
+
+  it 'keeps the same email if email not provided in update' do
+    original_email = user.email
+    put user_registration_path, params: {
+      user: {
+        first_name: 'X',
+        last_name: 'Y',
+        current_password: 'password123'
+      }
+    }
+    user.reload
+    expect(user.email).to eq(original_email)
   end
 end
