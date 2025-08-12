@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :token do
-    value { "MyText" }
-    expired_at { "2025-07-21 08:46:52" }
+    value { SecureRandom.hex(32) }
+    expired_at { 24.hours.from_now }
   end
 end
